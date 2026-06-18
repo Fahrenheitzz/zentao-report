@@ -1,0 +1,21 @@
+# 敏感配置
+zentao_config.json
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 临时文件
+*.log
+*.tmp

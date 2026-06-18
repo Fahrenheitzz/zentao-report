@@ -1,0 +1,57 @@
+{
+  "projects": {
+    "商城3.0": {
+      "project_id": 1013,
+      "project_name": "商城3.0",
+      "product_id": 53,
+      "product_name": "商城",
+      "app_name": "商城",
+      "pm_account": "A80369",
+      "pm_name": "朱姣红",
+      "pm_role": "迭代负责人",
+      "po_account": "A80005",
+      "po_name": "曾琴",
+      "po_role": "产品负责人",
+      "publish_account": "A80360",
+      "publish_name": "莫济财",
+      "publish_role": "发布负责人",
+      "qd_account": "A80725",
+      "qd_name": "王新石",
+      "qd_role": "测试负责人"
+    },
+    "格力官网": {
+      "project_id": 4047,
+      "project_name": "格力官网",
+      "product_id": 599,
+      "product_name": "格力官网",
+      "app_name": "格力官网",
+      "pm_account": "A80369",
+      "pm_name": "朱姣红",
+      "pm_role": "迭代负责人",
+      "po_account": "A80619",
+      "po_name": "刘素素",
+      "po_role": "产品负责人",
+      "publish_account": "A80185",
+      "publish_name": "陈日志",
+      "publish_role": "发布负责人",
+      "qd_account": "A80374",
+      "qd_name": "邹倩如",
+      "qd_role": "测试负责人"
+    }
+  },
+  "zentao": {
+    "base_url": "https://ztpm.gree.com:8888",
+    "api_base": "https://ztpm.gree.com:8888/api.php/v1"
+  },
+  "notes": {
+    "字段说明": {
+      "product_id": "所属产品ID",
+      "product_name": "所属产品名称",
+      "app_name": "所属应用名称",
+      "pm": "迭代负责人（项目经理）",
+      "po": "产品负责人",
+      "publish": "发布负责人",
+      "qd": "测试负责人（QD）"
+    }
+  }
+}

@@ -314,8 +314,6 @@ function toggleStoryDetail(){
     }
 }
 
-}
-
 /* ===== 图表1：需求阶段分布（横向柱状图） ===== */
 (function(){
     var cv = document.getElementById("stageChart"); if(!cv) return;
@@ -715,23 +713,20 @@ def make_report_html(data, today, out_path):
         '<div class="chart-card"><div class="chart-title">&#128202; 任务类型分布</div>'
         '<canvas id="typeChart"></canvas></div></div>'))
 
-    # 7. 需求分析（统计卡片）
+    # 7. 需求分析（统计卡片 + 可展开明细，同一个 section）
     parts.append(('<div class="section"><div class="section-title">&#128203; 需求分析（%s 个）</div>'
         '<div class="story-stats">'
         '<div class="sstat"><div class="sstat-val" style="color:#3b82f6">%s</div><div class="sstat-lbl">active</div></div>'
         '<div class="sstat"><div class="sstat-val" style="color:#22c55e">%s</div><div class="sstat-lbl">closed</div></div>'
         '<div class="sstat"><div class="sstat-val" style="color:#f59e0b">%s</div><div class="sstat-lbl">changed</div></div>'
         '<div class="sstat"><div class="sstat-val" style="color:#6b7280">%s</div><div class="sstat-lbl">draft</div></div>'
-        '</div>') % (
-        story_total, story_active, story_closed, story_changed, story_draft))
-
-    # 7b. 需求明细（可展开，同一 section 内）
-    parts.append(('<div class="story-detail-header" onclick="toggleStoryDetail()">'
+        '</div>'
+        '<div class="story-detail-header" onclick="toggleStoryDetail()">'
         '<span class="sd-arrow" id="sdArrow">&#9654;</span>需求明细（共 %s 个，点击展开）</div>'
         '<div class="story-detail-body" id="storyDetailBody">'
         '<table><thead><tr><th>ID</th><th>优先级</th><th>标题</th><th>状态</th><th>阶段</th><th>创建人</th></tr></thead>'
         '<tbody>%s</tbody></table></div></div>') % (
-        story_total, story_rows))
+        story_total, story_active, story_closed, story_changed, story_draft, story_total, story_rows))
 
     # 8. 任务分析明细（Tab切换 + 按人折叠）
     parts.append(('<div class="section"><div class="section-title">&#128722; 任务分析明细（%s 人活跃 / 按5类分组）</div>'

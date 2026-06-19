@@ -119,7 +119,7 @@ def fetch_rich_executions(client):
     return all_tasks, all_excs
 
 # ── 生成 HTML ───────────────────────────────────────────────────────────────
-def make_html(all_tasks, all_excs, today):
+def make_html(all_tasks, all_excs, today, update_time):
     for t in all_tasks:
         for k in ('_pid', '_pname', '_st', '_rn', '_dl'):
             t.setdefault(k, '')
@@ -295,7 +295,7 @@ def make_html(all_tasks, all_excs, today):
     parts.append('<h1>禅道任务报告中心</h1>')
     parts.append('<p class="sub">Zentao Task Dashboard</p>')
     parts.append('</div>')
-    parts.append('<div class="dt"><span>%s 更新</span></div>' % today)
+    parts.append('<div class="dt"><span id="updateTime">📅 %s 更新</span><button class="refresh-btn" id="refreshBtn" onclick="triggerUpdate()"><span class="icon">↻</span> 实时更新</button></div>' % update_time)
 
     # 筛选按钮
     parts.append('<div class="fb">')
@@ -520,7 +520,8 @@ def main():
     print('  迭代: %d 个' % len(all_excs))
 
     today = datetime.now().strftime('%Y-%m-%d')
-    html = make_html(all_tasks, all_excs, today)
+    update_time = datetime.now().strftime('%Y-%m-%d %H:%M')
+    html = make_html(all_tasks, all_excs, today, update_time)
 
     out = OUTPUT_DIR / 'index.html'
     out.write_text(html, encoding='utf-8')

@@ -1,0 +1,1525 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>2026年6月 团队产出效率分析</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:#f0f2f5;color:#333;padding:20px;min-width:1100px}
+
+/* 头部 */
+.header{background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);color:#fff;border-radius:16px;padding:32px 36px;margin-bottom:24px;position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;top:-50%;right:-10%;width:400px;height:400px;background:radial-gradient(circle,rgba(79,172,254,.15),transparent);border-radius:50%}
+.header h1{font-size:28px;font-weight:800;margin-bottom:8px;position:relative;z-index:1}
+.header .sub{font-size:13px;color:rgba(255,255,255,.65);margin-bottom:18px;position:relative;z-index:1}
+.refresh-btn{display:inline-block;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.22);padding:5px 16px;border-radius:20px;font-size:12px;cursor:pointer;transition:.2s;text-decoration:none;position:relative;z-index:1}
+.refresh-btn:hover{background:rgba(255,255,255,.22)}
+
+/* 概览卡片 */
+.overview{display:flex;gap:14px;margin-bottom:24px;flex-wrap:nowrap}
+.ov-card{background:#fff;border-radius:14px;padding:18px 22px;min-width:155px;flex:1;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.06);transition:transform .15s}
+.ov-card:hover{transform:translateY(-2px)}
+.ov-num{font-size:34px;font-weight:900;line-height:1.2}
+.ov-lbl{font-size:12px;color:#888;margin-top:4px}
+.c-green{color:#10b981}.c-orange{color:#f59e0b}.c-dark{color:#374151}.c-blue{color:#2563eb}.c-red{color:#ef4444}
+
+/* 角色标签行 */
+.role-tabs{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.role-tab{background:#fff;border-radius:12px;padding:14px 20px;min-width:160px;cursor:pointer;border:2px solid transparent;box-shadow:0 1px 4px rgba(0,0,0,.06);transition:all .15s}
+.role-tab:hover{border-color:#2563eb;box-shadow:0 4px 12px rgba(37,99,235,.12)}
+.role-tab.active{border-color:#2563eb;background:#eff6ff}
+.rt-name{font-size:15px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.rt-dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.rt-info{font-size:11.5px;color:#666}
+.rt-info span{color:#10b981;font-weight:600}
+.rt-doing{color:#f59e0b;font-weight:600}
+
+/* 角色区块 */
+.role-section{display:none;background:#fff;border-radius:14px;margin-bottom:20px;box-shadow:0 1px 6px rgba(0,0,0,.06);overflow:hidden}
+.role-section.visible{display:block}
+.rs-head{padding:14px 22px;font-size:15px;font-weight:700;border-bottom:1px solid #eee;display:flex;align-items:center;gap:10px}
+.rs-bar{width:4px;height:18px;border-radius:2px;display:inline-block}
+.rs-sub{font-size:12px;color:#888;font-weight:400;margin-left:auto}
+
+/* 表格 */
+.table-wrap{overflow-x:auto}
+.ptable{width:100%;border-collapse:collapse;font-size:13px}
+.ptable th{background:#fafafa;color:#555;padding:10px 14px;text-align:left;font-weight:600;font-size:12px;border-bottom:2px solid #eaeaea;white-space:nowrap}
+.ptable td{padding:11px 14px;border-bottom:1px solid #f3f3f3;vertical-align:middle}
+.ptable tr:hover td{background:#fafbff}
+.idx-col{color:#aaa;width:40px;font-weight:600}
+.name-col{font-weight:700;min-width:70px}
+.num-col{text-align:center}
+.hrs-done{color:#10b981;font-weight:700}
+.hrs-total{color:#ea580c;font-weight:700}
+.hrs-est{color:#555}
+.hrs-spent{color:#9ca3af}
+.hrs-left{color:#374151}
+
+/* 进度条 */
+.pbar-wrap{display:flex;align-items:center;gap:8px;min-width:120px}
+.pbar-bg{flex:1;height:10px;background:#e5e7eb;border-radius:5px;overflow:hidden}
+.pbar-fill{height:100%;border-radius:5px;transition:width .3s}
+.pbar-pct{font-size:12px;font-weight:700;min-width:42px;text-align:right}
+.pct-high{color:#10b981}.pct-mid{color:#2563eb}.pct-low{color:#ef4444}
+
+/* 效率标签 */
+.tag{padding:2px 10px;border-radius:4px;font-size:11.5px;font-weight:700;white-space:nowrap}
+.tag-high{background:#d1fae5;color:#059669}
+.tag-norm{background:#dbeafe;color:#2563eb}
+.tag-slow{background:#fee2e2;color:#dc2626}
+
+/* 展开明细 */
+.detail-row{display:none;background:#fafbff}
+.detail-row.expanded{display:table-row}
+.detail-cell{padding:10px 14px 14px 54px}
+.detail-group{margin-bottom:8px}
+.dg-title{font-size:12px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:4px;color:#555;padding:4px 0}
+.dg-title:hover{color:#2563eb}
+.dg-arrow{transition:transform .2s;font-size:10px}
+.dg-arrow.open{transform:rotate(90deg)}
+.dg-body{display:none;padding:4px 0 4px 18px;font-size:11.5px;color:#666}
+.dg-body.show{display:block}
+.tlink{color:#2563eb;text-decoration:none}
+.tlink:hover{text-decoration:underline}
+
+/* 图表区 */
+.charts{display:flex;gap:20px;margin-top:28px}
+.chart-box{background:#fff;border-radius:14px;padding:20px;flex:1;box-shadow:0 1px 6px rgba(0,0,0,.06)}
+.chart-box h3{font-size:14px;font-weight:700;margin-bottom:16px;color:#333}
+.chart-canvas{width:100%;height:340px}
+</style>
+</head><body>
+
+<div class="header">
+  <h1>2026年6月 团队产出效率分析</h1>
+  <p class="sub">功能:角色分组 · 全量迭代 · 2026-06-18 18:36:44</p>
+  <a class="refresh-btn" href="#" onclick="location.reload()">⟳ 实时刷新</a>
+</div>
+<div class="overview">
+<div class="ov-card"><div class="ov-num c-green">26</div><div class="ov-lbl">当月已完成</div></div>
+<div class="ov-card"><div class="ov-num c-orange">191</div><div class="ov-lbl">进行中</div></div>
+<div class="ov-card"><div class="ov-num c-dark">31</div><div class="ov-lbl">参与人员</div></div>
+<div class="ov-card"><div class="ov-num c-blue">473.0h</div><div class="ov-lbl">总消耗工时</div></div>
+<div class="ov-card"><div class="ov-num c-blue">2576.0h</div><div class="ov-lbl">剩余工时</div></div>
+<div class="ov-card"><div class="ov-num c-red">27</div><div class="ov-lbl">超期任务</div></div>
+</div>
+<div class="role-tabs">
+<div class="role-tab" id="rtab-产品" onclick="toggleRole('产品')"><div class="rt-name"><span class="rt-dot" style="background:#8b5cf6"></span>产品</div><div class="rt-info">5人 · 完成<span>6</span>个/106.0h · 进行中<span class="rt-doing">32</span>个</div></div><div class="role-tab" id="rtab-后端开发" onclick="toggleRole('后端开发')"><div class="rt-name"><span class="rt-dot" style="background:#3b82f6"></span>后端开发</div><div class="rt-info">13人 · 完成<span>0</span>个/0.0h · 进行中<span class="rt-doing">56</span>个</div></div><div class="role-tab" id="rtab-前端开发" onclick="toggleRole('前端开发')"><div class="rt-name"><span class="rt-dot" style="background:#06b6d4"></span>前端开发</div><div class="rt-info">6人 · 完成<span>12</span>个/207.0h · 进行中<span class="rt-doing">34</span>个</div></div><div class="role-tab" id="rtab-测试" onclick="toggleRole('测试')"><div class="rt-name"><span class="rt-dot" style="background:#10b981"></span>测试</div><div class="rt-info">7人 · 完成<span>8</span>个/160.0h · 进行中<span class="rt-doing">69</span>个</div></div>
+</div>
+<div class="role-section" id="rsec-产品"><div class="rs-head"><span class="rs-bar" style="background:#8b5cf6"></span><span>产品</span><span class="rs-sub">5人 · 当月完成 6 任务 · 消耗 106.0h</span></div><div class="table-wrap"><table class="ptable"><thead><tr><th>#</th><th>人员</th><th>总任务</th><th>完成率</th><th>总工时</th><th>已完成消耗</th><th>未完成预估</th><th>未完成已耗</th><th>未完剩余</th><th>效率</th></tr></thead><tbody><tr style="cursor:pointer" onclick="togglePerson('p产品-0')">
+  <td class="idx-col">1</td>
+  <td class="name-col">程迎娣</td>
+  <td class="num-col">8</td>
+  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:66.7%;background:#10b981"></div></div><span class="pbar-pct pct-high">66.7%</span></div></td>
+  <td class="num-col hrs-total">144.0h</td>
+  <td class="num-col hrs-done">96.0h</td>
+  <td class="num-col hrs-est">48.0h</td>
+  <td class="num-col hrs-spent">32.0h</td>
+  <td class="num-col hrs-left">16.0h</td>
+  <td><span class="tag tag-high">高效</span></td>
+</tr>
+<tr id="detail-p产品-0" class="detail-row">
+  <td colspan="10">
+    <div class="detail-cell">
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p产品-0-done')">
+          <span class="dg-arrow" id="da-p产品-0-done">&#9654;</span>
+          当月已完成任务 (5项)
+        </div>
+        <div class="dg-body" id="dg-p产品-0-done">
+          <span style="margin-right:10px"><a class="tlink" href="#">#295768</a> 董店用户调研方案 <span style="color:#aaa">(24h/24h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295765</a> 【UX设计】脱谷机需求迭代 <span style="color:#aaa">(8h/8h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295764</a> 【UX设计】买赠赠实物活动-全员销售端 <span style="color:#aaa">(8h/8h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295760</a> 【UX设计】珠海国补增加安装时间提醒 <span style="color:#aaa">(24h/24h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295758</a> 【UX设计】买赠赠实物活动-用户端 <span style="color:#aaa">(32h/32h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p产品-0-doing')">
+          <span class="dg-arrow" id="da-p产品-0-doing">&#9654;</span>
+          进行中任务 (3+0项)
+        </div>
+        <div class="dg-body" id="dg-p产品-0-doing">
+          <span style="margin-right:10px"><a class="tlink" href="#">#295769</a> 董店用户调研-访谈记录表 <span style="color:#aaa">(16h/24h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295767</a> 【UX设计】6月版本交互走查跟进 <span style="color:#aaa">(8h/16h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295766</a> 6月版本需求评审-程迎娣 <span style="color:#aaa">(8h/8h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p产品-0-bug')">
+          <span class="dg-arrow" id="da-p产品-0-bug">&#9654;</span>
+          Bug (0解决 + 0活跃)
+        </div>
+        <div class="dg-body" id="dg-p产品-0-bug">
+          <span style="color:#aaa">暂无Bug明细数据</span>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr><tr style="cursor:pointer" onclick="togglePerson('p产品-1')">
+  <td class="idx-col">2</td>
+  <td class="name-col">罗哲瑶</td>
+  <td class="num-col">2</td>
+  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:40.0%;background:#2563eb"></div></div><span class="pbar-pct pct-mid">40.0%</span></div></td>
+  <td class="num-col hrs-total">25.0h</td>
+  <td class="num-col hrs-done">10.0h</td>
+  <td class="num-col hrs-est">15.0h</td>
+  <td class="num-col hrs-spent">0.0h</td>
+  <td class="num-col hrs-left">15.0h</td>
+  <td><span class="tag tag-norm">正常</span></td>
+</tr>
+<tr id="detail-p产品-1" class="detail-row">
+  <td colspan="10">
+    <div class="detail-cell">
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p产品-1-done')">
+          <span class="dg-arrow" id="da-p产品-1-done">&#9654;</span>
+          当月已完成任务 (1项)
+        </div>
+        <div class="dg-body" id="dg-p产品-1-done">
+          <span style="margin-right:10px"><a class="tlink" href="#">#292428</a> 【需求调研】风控模型调整第三期 <span style="color:#aaa">(10h/10h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p产品-1-doing')">
+          <span class="dg-arrow" id="da-p产品-1-doing">&#9654;</span>
+          进行中任务 (0+1项)
+        </div>
+        <div class="dg-body" id="dg-p产品-1-doing">
+          <span style="margin-right:10px"><a class="tlink" href="#">#292444</a> 【需求设计】风控模型调整第三期 <span style="color:#aaa">(0h/15h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p产品-1-bug')">
+          <span class="dg-arrow" id="da-p产品-1-bug">&#9654;</span>
+          Bug (0解决 + 0活跃)
+        </div>
+        <div class="dg-body" id="dg-p产品-1-bug">
+          <span style="color:#aaa">暂无Bug明细数据</span>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr><tr style="cursor:pointer" onclick="togglePerson('p产品-2')">
+  <td class="idx-col">3</td>
+  <td class="name-col">刘晓丹</td>
+  <td class="num-col">8</td>
+  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:0.0%;background:#ef4444"></div></div><span class="pbar-pct pct-low">0.0%</span></div></td>
+  <td class="num-col hrs-total">120.0h</td>
+  <td class="num-col hrs-done">0h</td>
+  <td class="num-col hrs-est">120.0h</td>
+  <td class="num-col hrs-spent">0.0h</td>
+  <td class="num-col hrs-left">120.0h</td>
+  <td><span class="tag tag-slow">迟缓</span></td>
+</tr>
+<tr id="detail-p产品-2" class="detail-row">
+  <td colspan="10">
+    <div class="detail-cell">
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p产品-2-done')">
+          <span class="dg-arrow" id="da-p产品-2-done">&#9654;</span>
+          当月已完成任务 (0项)
+        </div>
+        <div class="dg-body" id="dg-p产品-2-done">
+          <span style="color:#aaa">无</span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p产品-2-doing')">
+          <span class="dg-arrow" id="da-p产品-2-doing">&#9654;</span>
+          进行中任务 (0+8项)
+        </div>
+        <div class="dg-body" id="dg-p产品-2-doing">
+          <span style="margin-right:10px"><a class="tlink" href="#">#292446</a> 【需求设计】同一订单微信/支付宝传相同对外交易号 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292443</a> 【需求设计】2026珠海OTO国补审计 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292432</a> 【需求设计】珠海政策基于商品表决定是否参与国补 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292431</a> 【需求设计】银企直联二期 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292430</a> 【需求调研】同一订单微信/支付宝传相同对外交易号 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292427</a> 【需求调研】2026珠海OTO国补审计 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292416</a> 【需求调研】珠海政策基于商品表决定是否参与国补 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292415</a> 【需求调研】银企直联二期 <span style="color:#aaa">(0h/15h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p产品-2-bug')">
+          <span class="dg-arrow" id="da-p产品-2-bug">&#9654;</span>
+          Bug (0解决 + 0活跃)
+        </div>
+        <div class="dg-body" id="dg-p产品-2-bug">
+          <span style="color:#aaa">暂无Bug明细数据</span>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr><tr style="cursor:pointer" onclick="togglePerson('p产品-3')">
+  <td class="idx-col">4</td>
+  <td class="name-col">刘素素</td>
+  <td class="num-col">6</td>
+  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:0.0%;background:#ef4444"></div></div><span class="pbar-pct pct-low">0.0%</span></div></td>
+  <td class="num-col hrs-total">60.0h</td>
+  <td class="num-col hrs-done">0h</td>
+  <td class="num-col hrs-est">60.0h</td>
+  <td class="num-col hrs-spent">0.0h</td>
+  <td class="num-col hrs-left">60.0h</td>
+  <td><span class="tag tag-slow">迟缓</span></td>
+</tr>
+<tr id="detail-p产品-3" class="detail-row">
+  <td colspan="10">
+    <div class="detail-cell">
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p产品-3-done')">
+          <span class="dg-arrow" id="da-p产品-3-done">&#9654;</span>
+          当月已完成任务 (0项)
+        </div>
+        <div class="dg-body" id="dg-p产品-3-done">
+          <span style="color:#aaa">无</span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p产品-3-doing')">
+          <span class="dg-arrow" id="da-p产品-3-doing">&#9654;</span>
+          进行中任务 (0+4项)
+        </div>
+        <div class="dg-body" id="dg-p产品-3-doing">
+          <span style="margin-right:10px"><a class="tlink" href="#">#292445</a> 【需求设计】搜索页分享文案调整 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292440</a> 【需求设计】26广西国补 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292429</a> 【需求调研】搜索页分享文案调整 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292424</a> 【需求调研】26广西国补 <span style="color:#aaa">(0h/15h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p产品-3-bug')">
+          <span class="dg-arrow" id="da-p产品-3-bug">&#9654;</span>
+          Bug (0解决 + 0活跃)
+        </div>
+        <div class="dg-body" id="dg-p产品-3-bug">
+          <span style="color:#aaa">暂无Bug明细数据</span>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr><tr style="cursor:pointer" onclick="togglePerson('p产品-4')">
+  <td class="idx-col">5</td>
+  <td class="name-col">杨李雷</td>
+  <td class="num-col">16</td>
+  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:0.0%;background:#ef4444"></div></div><span class="pbar-pct pct-low">0.0%</span></div></td>
+  <td class="num-col hrs-total">240.0h</td>
+  <td class="num-col hrs-done">0h</td>
+  <td class="num-col hrs-est">240.0h</td>
+  <td class="num-col hrs-spent">0.0h</td>
+  <td class="num-col hrs-left">240.0h</td>
+  <td><span class="tag tag-slow">迟缓</span></td>
+</tr>
+<tr id="detail-p产品-4" class="detail-row">
+  <td colspan="10">
+    <div class="detail-cell">
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p产品-4-done')">
+          <span class="dg-arrow" id="da-p产品-4-done">&#9654;</span>
+          当月已完成任务 (0项)
+        </div>
+        <div class="dg-body" id="dg-p产品-4-done">
+          <span style="color:#aaa">无</span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p产品-4-doing')">
+          <span class="dg-arrow" id="da-p产品-4-doing">&#9654;</span>
+          进行中任务 (0+16项)
+        </div>
+        <div class="dg-body" id="dg-p产品-4-doing">
+          <span style="margin-right:10px"><a class="tlink" href="#">#292442</a> 【需求设计】珠海国补增加安装时间提醒 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292441</a> 【需求设计】脱谷机需求迭代 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292439</a> 【需求设计】短信整改四期 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292438</a> 【需求设计】修改物流单 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292437</a> 【需求设计】买赠赠实物活动 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292435</a> 【需求设计】第三方店铺催发货不推oms <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292434</a> 【需求设计】企业购认款查询限制调整 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292433</a> 【需求设计】海南国补开票推送时间更改 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292426</a> 【需求调研】珠海国补增加安装时间提醒 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292425</a> 【需求调研】脱谷机需求迭代 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292423</a> 【需求调研】短信整改四期 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292422</a> 【需求调研】修改物流单 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292421</a> 【需求调研】买赠赠实物活动 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292419</a> 【需求调研】第三方店铺催发货不推oms <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292418</a> 【需求调研】企业购认款查询限制调整 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292417</a> 【需求调研】海南国补开票推送时间更改 <span style="color:#aaa">(0h/15h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p产品-4-bug')">
+          <span class="dg-arrow" id="da-p产品-4-bug">&#9654;</span>
+          Bug (0解决 + 0活跃)
+        </div>
+        <div class="dg-body" id="dg-p产品-4-bug">
+          <span style="color:#aaa">暂无Bug明细数据</span>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr></tbody></table></div></div>
+<div class="role-section" id="rsec-后端开发"><div class="rs-head"><span class="rs-bar" style="background:#3b82f6"></span><span>后端开发</span><span class="rs-sub">13人 · 当月完成 0 任务 · 消耗 0.0h</span></div><div class="table-wrap"><table class="ptable"><thead><tr><th>#</th><th>人员</th><th>总任务</th><th>完成率</th><th>总工时</th><th>已完成消耗</th><th>未完成预估</th><th>未完成已耗</th><th>未完剩余</th><th>效率</th></tr></thead><tbody><tr style="cursor:pointer" onclick="togglePerson('p后端开发-0')">
+  <td class="idx-col">1</td>
+  <td class="name-col">李永鹏</td>
+  <td class="num-col">11</td>
+  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:0.0%;background:#ef4444"></div></div><span class="pbar-pct pct-low">0.0%</span></div></td>
+  <td class="num-col hrs-total">160.0h</td>
+  <td class="num-col hrs-done">0h</td>
+  <td class="num-col hrs-est">160.0h</td>
+  <td class="num-col hrs-spent">0.0h</td>
+  <td class="num-col hrs-left">160.0h</td>
+  <td><span class="tag tag-slow">迟缓</span></td>
+</tr>
+<tr id="detail-p后端开发-0" class="detail-row">
+  <td colspan="10">
+    <div class="detail-cell">
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-0-done')">
+          <span class="dg-arrow" id="da-p后端开发-0-done">&#9654;</span>
+          当月已完成任务 (0项)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-0-done">
+          <span style="color:#aaa">无</span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-0-doing')">
+          <span class="dg-arrow" id="da-p后端开发-0-doing">&#9654;</span>
+          进行中任务 (0+11项)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-0-doing">
+          <span style="margin-right:10px"><a class="tlink" href="#">#295290</a> 安徽审计-银联 <span style="color:#aaa">(0h/8h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295289</a> 福建审计-银联 <span style="color:#aaa">(0h/8h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295288</a> 河北2026核销接口对接 <span style="color:#aaa">(0h/24h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290587</a> 6月版本技术方案设计与技术评审-李永鹏 <span style="color:#aaa">(0h/16h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290580</a> 6月版本测试用例评审-李永鹏 <span style="color:#aaa">(0h/4h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290573</a> 6月版本需求评审-李永鹏 <span style="color:#aaa">(0h/8h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290389</a> 线上问题处理-李永鹏 <span style="color:#aaa">(0h/16h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290381</a> 搜索页分享文案调整 <span style="color:#aaa">(0h/4h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290378</a> 2026珠海OTO国补审计 <span style="color:#aaa">(0h/32h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290372</a> 买赠赠实物活动-订单列表，详情oms对接 <span style="color:#aaa">(0h/16h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290359</a> 银企直联二期 <span style="color:#aaa">(0h/24h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-0-bug')">
+          <span class="dg-arrow" id="da-p后端开发-0-bug">&#9654;</span>
+          Bug (0解决 + 0活跃)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-0-bug">
+          <span style="color:#aaa">暂无Bug明细数据</span>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr><tr style="cursor:pointer" onclick="togglePerson('p后端开发-1')">
+  <td class="idx-col">2</td>
+  <td class="name-col">曾宪贵</td>
+  <td class="num-col">12</td>
+  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:0.0%;background:#ef4444"></div></div><span class="pbar-pct pct-low">0.0%</span></div></td>
+  <td class="num-col hrs-total">164.0h</td>
+  <td class="num-col hrs-done">0h</td>
+  <td class="num-col hrs-est">164.0h</td>
+  <td class="num-col hrs-spent">0.0h</td>
+  <td class="num-col hrs-left">164.0h</td>
+  <td><span class="tag tag-slow">迟缓</span></td>
+</tr>
+<tr id="detail-p后端开发-1" class="detail-row">
+  <td colspan="10">
+    <div class="detail-cell">
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-1-done')">
+          <span class="dg-arrow" id="da-p后端开发-1-done">&#9654;</span>
+          当月已完成任务 (0项)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-1-done">
+          <span style="color:#aaa">无</span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-1-doing')">
+          <span class="dg-arrow" id="da-p后端开发-1-doing">&#9654;</span>
+          进行中任务 (0+12项)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-1-doing">
+          <span style="margin-right:10px"><a class="tlink" href="#">#295287</a> 辽宁支付接口更新 <span style="color:#aaa">(0h/8h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295285</a> 福建交易上送—银联 <span style="color:#aaa">(0h/8h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290584</a> 6月版本技术方案设计与技术评审-曾宪贵 <span style="color:#aaa">(0h/16h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290577</a> 6月版本测试用例评审-曾宪贵 <span style="color:#aaa">(0h/4h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290570</a> 6月版本需求评审-曾宪贵 <span style="color:#aaa">(0h/8h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290386</a> 线上问题处理-曾宪贵 <span style="color:#aaa">(0h/16h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290382</a> 同一订单微信/支付宝传相同对外交易号 <span style="color:#aaa">(0h/16h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290375</a> 26广西国补-订单上送 <span style="color:#aaa">(0h/16h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290370</a> 买赠赠实物活动-确认订单拆单 <span style="color:#aaa">(0h/32h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290365</a> 第三方店铺催发货不推oms <span style="color:#aaa">(0h/8h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290363</a> 海南国补开票推送时间更改 <span style="color:#aaa">(0h/16h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290361</a> 珠海政策基于商品表决定是否参与国补-下单 <span style="color:#aaa">(0h/16h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-1-bug')">
+          <span class="dg-arrow" id="da-p后端开发-1-bug">&#9654;</span>
+          Bug (0解决 + 0活跃)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-1-bug">
+          <span style="color:#aaa">暂无Bug明细数据</span>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr><tr style="cursor:pointer" onclick="togglePerson('p后端开发-2')">
+  <td class="idx-col">3</td>
+  <td class="name-col">古孟杰</td>
+  <td class="num-col">10</td>
+  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:0.0%;background:#ef4444"></div></div><span class="pbar-pct pct-low">0.0%</span></div></td>
+  <td class="num-col hrs-total">132.0h</td>
+  <td class="num-col hrs-done">0h</td>
+  <td class="num-col hrs-est">132.0h</td>
+  <td class="num-col hrs-spent">0.0h</td>
+  <td class="num-col hrs-left">132.0h</td>
+  <td><span class="tag tag-slow">迟缓</span></td>
+</tr>
+<tr id="detail-p后端开发-2" class="detail-row">
+  <td colspan="10">
+    <div class="detail-cell">
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-2-done')">
+          <span class="dg-arrow" id="da-p后端开发-2-done">&#9654;</span>
+          当月已完成任务 (0项)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-2-done">
+          <span style="color:#aaa">无</span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-2-doing')">
+          <span class="dg-arrow" id="da-p后端开发-2-doing">&#9654;</span>
+          进行中任务 (1+8项)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-2-doing">
+          <span style="margin-right:10px"><a class="tlink" href="#">#278821</a> 安徽26交易与核销-银商 <span style="color:#aaa">(0h/16h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295286</a> 福建交易核销—银联 <span style="color:#aaa">(0h/16h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290582</a> 6月版本技术方案设计与技术评审-古孟杰 <span style="color:#aaa">(0h/16h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290575</a> 6月版本测试用例评审-古孟杰 <span style="color:#aaa">(0h/4h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290568</a> 6月版本需求评审-古孟杰 <span style="color:#aaa">(0h/8h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290384</a> 线上问题处理-古孟杰 <span style="color:#aaa">(0h/16h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290379</a> 风控模型调整第三期 <span style="color:#aaa">(0h/16h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290377</a> 珠海国补增加安装时间提醒 <span style="color:#aaa">(0h/24h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290376</a> 26广西国补-审计 <span style="color:#aaa">(0h/16h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-2-bug')">
+          <span class="dg-arrow" id="da-p后端开发-2-bug">&#9654;</span>
+          Bug (0解决 + 0活跃)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-2-bug">
+          <span style="color:#aaa">暂无Bug明细数据</span>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr><tr style="cursor:pointer" onclick="togglePerson('p后端开发-3')">
+  <td class="idx-col">4</td>
+  <td class="name-col">李治国</td>
+  <td class="num-col">7</td>
+  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:0.0%;background:#ef4444"></div></div><span class="pbar-pct pct-low">0.0%</span></div></td>
+  <td class="num-col hrs-total">108.0h</td>
+  <td class="num-col hrs-done">0h</td>
+  <td class="num-col hrs-est">108.0h</td>
+  <td class="num-col hrs-spent">0.0h</td>
+  <td class="num-col hrs-left">108.0h</td>
+  <td><span class="tag tag-slow">迟缓</span></td>
+</tr>
+<tr id="detail-p后端开发-3" class="detail-row">
+  <td colspan="10">
+    <div class="detail-cell">
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-3-done')">
+          <span class="dg-arrow" id="da-p后端开发-3-done">&#9654;</span>
+          当月已完成任务 (0项)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-3-done">
+          <span style="color:#aaa">无</span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-3-doing')">
+          <span class="dg-arrow" id="da-p后端开发-3-doing">&#9654;</span>
+          进行中任务 (0+7项)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-3-doing">
+          <span style="margin-right:10px"><a class="tlink" href="#">#290586</a> 6月版本技术方案设计与技术评审-李治国 <span style="color:#aaa">(0h/16h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290579</a> 6月版本测试用例评审-李治国 <span style="color:#aaa">(0h/4h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290572</a> 6月版本需求评审-李治国 <span style="color:#aaa">(0h/8h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290387</a> 线上问题处理-李治国 <span style="color:#aaa">(0h/16h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290368</a> 买赠赠实物活动-管理活动审核商详 <span style="color:#aaa">(0h/16h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290367</a> 买赠赠实物活动-管理活动缓存 <span style="color:#aaa">(0h/32h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290360</a> 珠海政策基于商品表决定是否参与国补 <span style="color:#aaa">(0h/16h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-3-bug')">
+          <span class="dg-arrow" id="da-p后端开发-3-bug">&#9654;</span>
+          Bug (0解决 + 0活跃)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-3-bug">
+          <span style="color:#aaa">暂无Bug明细数据</span>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr><tr style="cursor:pointer" onclick="togglePerson('p后端开发-4')">
+  <td class="idx-col">5</td>
+  <td class="name-col">李岳东</td>
+  <td class="num-col">7</td>
+  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:0.0%;background:#ef4444"></div></div><span class="pbar-pct pct-low">0.0%</span></div></td>
+  <td class="num-col hrs-total">100.0h</td>
+  <td class="num-col hrs-done">0h</td>
+  <td class="num-col hrs-est">100.0h</td>
+  <td class="num-col hrs-spent">0.0h</td>
+  <td class="num-col hrs-left">100.0h</td>
+  <td><span class="tag tag-slow">迟缓</span></td>
+</tr>
+<tr id="detail-p后端开发-4" class="detail-row">
+  <td colspan="10">
+    <div class="detail-cell">
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-4-done')">
+          <span class="dg-arrow" id="da-p后端开发-4-done">&#9654;</span>
+          当月已完成任务 (0项)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-4-done">
+          <span style="color:#aaa">无</span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-4-doing')">
+          <span class="dg-arrow" id="da-p后端开发-4-doing">&#9654;</span>
+          进行中任务 (0+7项)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-4-doing">
+          <span style="margin-right:10px"><a class="tlink" href="#">#290585</a> 6月版本技术方案设计与技术评审-李岳东 <span style="color:#aaa">(0h/16h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290578</a> 6月版本测试用例评审-李岳东 <span style="color:#aaa">(0h/4h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290571</a> 6月版本需求评审-李岳东 <span style="color:#aaa">(0h/8h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290388</a> 线上问题处理-李岳东 <span style="color:#aaa">(0h/16h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290373</a> 修改物流单 <span style="color:#aaa">(0h/16h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290369</a> 买赠赠实物活动-售后 <span style="color:#aaa">(0h/24h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290364</a> 企业购认款查询限制调整 <span style="color:#aaa">(0h/16h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-4-bug')">
+          <span class="dg-arrow" id="da-p后端开发-4-bug">&#9654;</span>
+          Bug (0解决 + 0活跃)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-4-bug">
+          <span style="color:#aaa">暂无Bug明细数据</span>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr><tr style="cursor:pointer" onclick="togglePerson('p后端开发-5')">
+  <td class="idx-col">6</td>
+  <td class="name-col">未分配</td>
+  <td class="num-col">10</td>
+  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:0.0%;background:#ef4444"></div></div><span class="pbar-pct pct-low">0.0%</span></div></td>
+  <td class="num-col hrs-total">0h</td>
+  <td class="num-col hrs-done">0h</td>
+  <td class="num-col hrs-est">0h</td>
+  <td class="num-col hrs-spent">0h</td>
+  <td class="num-col hrs-left">0.0h</td>
+  <td><span class="tag tag-slow">迟缓</span></td>
+</tr>
+<tr id="detail-p后端开发-5" class="detail-row">
+  <td colspan="10">
+    <div class="detail-cell">
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-5-done')">
+          <span class="dg-arrow" id="da-p后端开发-5-done">&#9654;</span>
+          当月已完成任务 (0项)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-5-done">
+          <span style="color:#aaa">无</span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-5-doing')">
+          <span class="dg-arrow" id="da-p后端开发-5-doing">&#9654;</span>
+          进行中任务 (0+0项)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-5-doing">
+          <span style="color:#aaa">无</span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-5-bug')">
+          <span class="dg-arrow" id="da-p后端开发-5-bug">&#9654;</span>
+          Bug (0解决 + 0活跃)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-5-bug">
+          <span style="color:#aaa">暂无Bug明细数据</span>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr><tr style="cursor:pointer" onclick="togglePerson('p后端开发-6')">
+  <td class="idx-col">7</td>
+  <td class="name-col">莫济财</td>
+  <td class="num-col">3</td>
+  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:0.0%;background:#ef4444"></div></div><span class="pbar-pct pct-low">0.0%</span></div></td>
+  <td class="num-col hrs-total">28.0h</td>
+  <td class="num-col hrs-done">0h</td>
+  <td class="num-col hrs-est">28.0h</td>
+  <td class="num-col hrs-spent">0.0h</td>
+  <td class="num-col hrs-left">28.0h</td>
+  <td><span class="tag tag-slow">迟缓</span></td>
+</tr>
+<tr id="detail-p后端开发-6" class="detail-row">
+  <td colspan="10">
+    <div class="detail-cell">
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-6-done')">
+          <span class="dg-arrow" id="da-p后端开发-6-done">&#9654;</span>
+          当月已完成任务 (0项)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-6-done">
+          <span style="color:#aaa">无</span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-6-doing')">
+          <span class="dg-arrow" id="da-p后端开发-6-doing">&#9654;</span>
+          进行中任务 (0+3项)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-6-doing">
+          <span style="margin-right:10px"><a class="tlink" href="#">#290576</a> 6月版本测试用例评审-莫济财 <span style="color:#aaa">(0h/4h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290569</a> 6月版本需求评审-莫济财 <span style="color:#aaa">(0h/8h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290385</a> 线上问题处理-莫济财 <span style="color:#aaa">(0h/16h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-6-bug')">
+          <span class="dg-arrow" id="da-p后端开发-6-bug">&#9654;</span>
+          Bug (0解决 + 0活跃)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-6-bug">
+          <span style="color:#aaa">暂无Bug明细数据</span>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr><tr style="cursor:pointer" onclick="togglePerson('p后端开发-7')">
+  <td class="idx-col">8</td>
+  <td class="name-col">卢卓楷</td>
+  <td class="num-col">2</td>
+  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:0.0%;background:#ef4444"></div></div><span class="pbar-pct pct-low">0.0%</span></div></td>
+  <td class="num-col hrs-total">32.0h</td>
+  <td class="num-col hrs-done">0h</td>
+  <td class="num-col hrs-est">32.0h</td>
+  <td class="num-col hrs-spent">0.0h</td>
+  <td class="num-col hrs-left">32.0h</td>
+  <td><span class="tag tag-slow">迟缓</span></td>
+</tr>
+<tr id="detail-p后端开发-7" class="detail-row">
+  <td colspan="10">
+    <div class="detail-cell">
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-7-done')">
+          <span class="dg-arrow" id="da-p后端开发-7-done">&#9654;</span>
+          当月已完成任务 (0项)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-7-done">
+          <span style="color:#aaa">无</span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-7-doing')">
+          <span class="dg-arrow" id="da-p后端开发-7-doing">&#9654;</span>
+          进行中任务 (0+2项)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-7-doing">
+          <span style="margin-right:10px"><a class="tlink" href="#">#290392</a> 线上问题处理-卢卓楷 <span style="color:#aaa">(0h/16h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290362</a> 珠海政策基于商品表决定是否参与国补-商品 <span style="color:#aaa">(0h/16h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-7-bug')">
+          <span class="dg-arrow" id="da-p后端开发-7-bug">&#9654;</span>
+          Bug (0解决 + 0活跃)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-7-bug">
+          <span style="color:#aaa">暂无Bug明细数据</span>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr><tr style="cursor:pointer" onclick="togglePerson('p后端开发-8')">
+  <td class="idx-col">9</td>
+  <td class="name-col">张开文</td>
+  <td class="num-col">1</td>
+  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:0.0%;background:#ef4444"></div></div><span class="pbar-pct pct-low">0.0%</span></div></td>
+  <td class="num-col hrs-total">16.0h</td>
+  <td class="num-col hrs-done">0h</td>
+  <td class="num-col hrs-est">16.0h</td>
+  <td class="num-col hrs-spent">0.0h</td>
+  <td class="num-col hrs-left">16.0h</td>
+  <td><span class="tag tag-slow">迟缓</span></td>
+</tr>
+<tr id="detail-p后端开发-8" class="detail-row">
+  <td colspan="10">
+    <div class="detail-cell">
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-8-done')">
+          <span class="dg-arrow" id="da-p后端开发-8-done">&#9654;</span>
+          当月已完成任务 (0项)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-8-done">
+          <span style="color:#aaa">无</span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-8-doing')">
+          <span class="dg-arrow" id="da-p后端开发-8-doing">&#9654;</span>
+          进行中任务 (0+1项)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-8-doing">
+          <span style="margin-right:10px"><a class="tlink" href="#">#290391</a> 线上问题处理-张开文 <span style="color:#aaa">(0h/16h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-8-bug')">
+          <span class="dg-arrow" id="da-p后端开发-8-bug">&#9654;</span>
+          Bug (0解决 + 0活跃)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-8-bug">
+          <span style="color:#aaa">暂无Bug明细数据</span>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr><tr style="cursor:pointer" onclick="togglePerson('p后端开发-9')">
+  <td class="idx-col">10</td>
+  <td class="name-col">周梦杰</td>
+  <td class="num-col">1</td>
+  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:0.0%;background:#ef4444"></div></div><span class="pbar-pct pct-low">0.0%</span></div></td>
+  <td class="num-col hrs-total">16.0h</td>
+  <td class="num-col hrs-done">0h</td>
+  <td class="num-col hrs-est">16.0h</td>
+  <td class="num-col hrs-spent">0.0h</td>
+  <td class="num-col hrs-left">16.0h</td>
+  <td><span class="tag tag-slow">迟缓</span></td>
+</tr>
+<tr id="detail-p后端开发-9" class="detail-row">
+  <td colspan="10">
+    <div class="detail-cell">
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-9-done')">
+          <span class="dg-arrow" id="da-p后端开发-9-done">&#9654;</span>
+          当月已完成任务 (0项)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-9-done">
+          <span style="color:#aaa">无</span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-9-doing')">
+          <span class="dg-arrow" id="da-p后端开发-9-doing">&#9654;</span>
+          进行中任务 (0+1项)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-9-doing">
+          <span style="margin-right:10px"><a class="tlink" href="#">#290390</a> 线上问题处理-周梦杰 <span style="color:#aaa">(0h/16h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-9-bug')">
+          <span class="dg-arrow" id="da-p后端开发-9-bug">&#9654;</span>
+          Bug (0解决 + 0活跃)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-9-bug">
+          <span style="color:#aaa">暂无Bug明细数据</span>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr><tr style="cursor:pointer" onclick="togglePerson('p后端开发-10')">
+  <td class="idx-col">11</td>
+  <td class="name-col">梁胜芳</td>
+  <td class="num-col">1</td>
+  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:0.0%;background:#ef4444"></div></div><span class="pbar-pct pct-low">0.0%</span></div></td>
+  <td class="num-col hrs-total">16.0h</td>
+  <td class="num-col hrs-done">0h</td>
+  <td class="num-col hrs-est">16.0h</td>
+  <td class="num-col hrs-spent">7.0h</td>
+  <td class="num-col hrs-left">9.0h</td>
+  <td><span class="tag tag-slow">迟缓</span></td>
+</tr>
+<tr id="detail-p后端开发-10" class="detail-row">
+  <td colspan="10">
+    <div class="detail-cell">
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-10-done')">
+          <span class="dg-arrow" id="da-p后端开发-10-done">&#9654;</span>
+          当月已完成任务 (0项)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-10-done">
+          <span style="color:#aaa">无</span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-10-doing')">
+          <span class="dg-arrow" id="da-p后端开发-10-doing">&#9654;</span>
+          进行中任务 (1+0项)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-10-doing">
+          <span style="margin-right:10px"><a class="tlink" href="#">#290383</a> 线上问题处理-梁胜芳 <span style="color:#aaa">(7h/16h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-10-bug')">
+          <span class="dg-arrow" id="da-p后端开发-10-bug">&#9654;</span>
+          Bug (0解决 + 0活跃)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-10-bug">
+          <span style="color:#aaa">暂无Bug明细数据</span>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr><tr style="cursor:pointer" onclick="togglePerson('p后端开发-11')">
+  <td class="idx-col">12</td>
+  <td class="name-col">潘国平</td>
+  <td class="num-col">1</td>
+  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:0.0%;background:#ef4444"></div></div><span class="pbar-pct pct-low">0.0%</span></div></td>
+  <td class="num-col hrs-total">16.0h</td>
+  <td class="num-col hrs-done">0h</td>
+  <td class="num-col hrs-est">16.0h</td>
+  <td class="num-col hrs-spent">0.0h</td>
+  <td class="num-col hrs-left">16.0h</td>
+  <td><span class="tag tag-slow">迟缓</span></td>
+</tr>
+<tr id="detail-p后端开发-11" class="detail-row">
+  <td colspan="10">
+    <div class="detail-cell">
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-11-done')">
+          <span class="dg-arrow" id="da-p后端开发-11-done">&#9654;</span>
+          当月已完成任务 (0项)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-11-done">
+          <span style="color:#aaa">无</span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-11-doing')">
+          <span class="dg-arrow" id="da-p后端开发-11-doing">&#9654;</span>
+          进行中任务 (0+1项)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-11-doing">
+          <span style="margin-right:10px"><a class="tlink" href="#">#290380</a> 风控模型调整第三期-风控管理 <span style="color:#aaa">(0h/16h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-11-bug')">
+          <span class="dg-arrow" id="da-p后端开发-11-bug">&#9654;</span>
+          Bug (0解决 + 0活跃)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-11-bug">
+          <span style="color:#aaa">暂无Bug明细数据</span>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr><tr style="cursor:pointer" onclick="togglePerson('p后端开发-12')">
+  <td class="idx-col">13</td>
+  <td class="name-col">周群峰</td>
+  <td class="num-col">1</td>
+  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:0.0%;background:#ef4444"></div></div><span class="pbar-pct pct-low">0.0%</span></div></td>
+  <td class="num-col hrs-total">30.0h</td>
+  <td class="num-col hrs-done">0h</td>
+  <td class="num-col hrs-est">30.0h</td>
+  <td class="num-col hrs-spent">0.0h</td>
+  <td class="num-col hrs-left">30.0h</td>
+  <td><span class="tag tag-slow">迟缓</span></td>
+</tr>
+<tr id="detail-p后端开发-12" class="detail-row">
+  <td colspan="10">
+    <div class="detail-cell">
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-12-done')">
+          <span class="dg-arrow" id="da-p后端开发-12-done">&#9654;</span>
+          当月已完成任务 (0项)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-12-done">
+          <span style="color:#aaa">无</span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-12-doing')">
+          <span class="dg-arrow" id="da-p后端开发-12-doing">&#9654;</span>
+          进行中任务 (0+1项)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-12-doing">
+          <span style="margin-right:10px"><a class="tlink" href="#">#295583</a> 库存模块双活 <span style="color:#aaa">(0h/30h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p后端开发-12-bug')">
+          <span class="dg-arrow" id="da-p后端开发-12-bug">&#9654;</span>
+          Bug (0解决 + 0活跃)
+        </div>
+        <div class="dg-body" id="dg-p后端开发-12-bug">
+          <span style="color:#aaa">暂无Bug明细数据</span>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr></tbody></table></div></div>
+<div class="role-section" id="rsec-前端开发"><div class="rs-head"><span class="rs-bar" style="background:#06b6d4"></span><span>前端开发</span><span class="rs-sub">6人 · 当月完成 12 任务 · 消耗 207.0h</span></div><div class="table-wrap"><table class="ptable"><thead><tr><th>#</th><th>人员</th><th>总任务</th><th>完成率</th><th>总工时</th><th>已完成消耗</th><th>未完成预估</th><th>未完成已耗</th><th>未完剩余</th><th>效率</th></tr></thead><tbody><tr style="cursor:pointer" onclick="togglePerson('p前端开发-0')">
+  <td class="idx-col">1</td>
+  <td class="name-col">汪伟</td>
+  <td class="num-col">12</td>
+  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:100.0%;background:#10b981"></div></div><span class="pbar-pct pct-high">100.0%</span></div></td>
+  <td class="num-col hrs-total">207.0h</td>
+  <td class="num-col hrs-done">207.0h</td>
+  <td class="num-col hrs-est">0h</td>
+  <td class="num-col hrs-spent">0h</td>
+  <td class="num-col hrs-left">0.0h</td>
+  <td><span class="tag tag-high">高效</span></td>
+</tr>
+<tr id="detail-p前端开发-0" class="detail-row">
+  <td colspan="10">
+    <div class="detail-cell">
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p前端开发-0-done')">
+          <span class="dg-arrow" id="da-p前端开发-0-done">&#9654;</span>
+          当月已完成任务 (12项)
+        </div>
+        <div class="dg-body" id="dg-p前端开发-0-done">
+          <span style="margin-right:10px"><a class="tlink" href="#">#295628</a> 6月版本测试用例评审韦-韦福忠 <span style="color:#aaa">(2h/2h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295627</a> 6月版本测试用例评审-汪伟 <span style="color:#aaa">(2h/2h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295622</a> 6月版本技术方案设计与技术评审-韦福忠 <span style="color:#aaa">(4h/4h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295621</a> 6月版本技术方案设计与技术评审-汪伟 <span style="color:#aaa">(4h/4h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295616</a> 6月版本需求评审-韦福忠 <span style="color:#aaa">(4h/4h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295615</a> 6月版本需求评审-汪伟 <span style="color:#aaa">(4h/4h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295614</a> 6月版本需求评审-彭衡 <span style="color:#aaa">(10h/4h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#294520</a> 商城3.0/26年董店系统专项-vue3升级提测全模块自测-韦福忠 <span style="color:#aaa">(32h/35h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#294517</a> 商城3.0/26年董店系统专项-vue3升级提测全模块自测-彭衡 <span style="color:#aaa">(40h/35h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#294512</a> 商城3.0/26年董店系统专项-满减/直降活动页面Vue3改造 <span style="color:#aaa">(35h/35h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#294501</a> 商城3.0/26年董店系统专项-个人中心模块Vue3改造 <span style="color:#aaa">(35h/35h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#294498</a> 商城3.0/26年董店系统专项-Vue3升级前端全链路各模块排查 <span style="color:#aaa">(35h/35h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p前端开发-0-doing')">
+          <span class="dg-arrow" id="da-p前端开发-0-doing">&#9654;</span>
+          进行中任务 (0+0项)
+        </div>
+        <div class="dg-body" id="dg-p前端开发-0-doing">
+          <span style="color:#aaa">无</span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p前端开发-0-bug')">
+          <span class="dg-arrow" id="da-p前端开发-0-bug">&#9654;</span>
+          Bug (0解决 + 0活跃)
+        </div>
+        <div class="dg-body" id="dg-p前端开发-0-bug">
+          <span style="color:#aaa">暂无Bug明细数据</span>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr><tr style="cursor:pointer" onclick="togglePerson('p前端开发-1')">
+  <td class="idx-col">2</td>
+  <td class="name-col">彭衡</td>
+  <td class="num-col">4</td>
+  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:0.0%;background:#ef4444"></div></div><span class="pbar-pct pct-low">0.0%</span></div></td>
+  <td class="num-col hrs-total">46.0h</td>
+  <td class="num-col hrs-done">0h</td>
+  <td class="num-col hrs-est">46.0h</td>
+  <td class="num-col hrs-spent">0.0h</td>
+  <td class="num-col hrs-left">46.0h</td>
+  <td><span class="tag tag-slow">迟缓</span></td>
+</tr>
+<tr id="detail-p前端开发-1" class="detail-row">
+  <td colspan="10">
+    <div class="detail-cell">
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p前端开发-1-done')">
+          <span class="dg-arrow" id="da-p前端开发-1-done">&#9654;</span>
+          当月已完成任务 (0项)
+        </div>
+        <div class="dg-body" id="dg-p前端开发-1-done">
+          <span style="color:#aaa">无</span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p前端开发-1-doing')">
+          <span class="dg-arrow" id="da-p前端开发-1-doing">&#9654;</span>
+          进行中任务 (0+4项)
+        </div>
+        <div class="dg-body" id="dg-p前端开发-1-doing">
+          <span style="margin-right:10px"><a class="tlink" href="#">#295626</a> 6月版本测试用例评审-彭衡 <span style="color:#aaa">(0h/2h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295620</a> 6月版本技术方案设计与技术评审-彭衡 <span style="color:#aaa">(0h/4h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295601</a> 【用户端】买赠赠实物活动-买赠接口对接 <span style="color:#aaa">(0h/20h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295600</a> 【用户端】买赠赠实物活动-买赠商品调整 <span style="color:#aaa">(0h/20h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p前端开发-1-bug')">
+          <span class="dg-arrow" id="da-p前端开发-1-bug">&#9654;</span>
+          Bug (0解决 + 0活跃)
+        </div>
+        <div class="dg-body" id="dg-p前端开发-1-bug">
+          <span style="color:#aaa">暂无Bug明细数据</span>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr><tr style="cursor:pointer" onclick="togglePerson('p前端开发-2')">
+  <td class="idx-col">3</td>
+  <td class="name-col">赵梓旭</td>
+  <td class="num-col">11</td>
+  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:0.0%;background:#ef4444"></div></div><span class="pbar-pct pct-low">0.0%</span></div></td>
+  <td class="num-col hrs-total">275.0h</td>
+  <td class="num-col hrs-done">0h</td>
+  <td class="num-col hrs-est">275.0h</td>
+  <td class="num-col hrs-spent">0.0h</td>
+  <td class="num-col hrs-left">275.0h</td>
+  <td><span class="tag tag-slow">迟缓</span></td>
+</tr>
+<tr id="detail-p前端开发-2" class="detail-row">
+  <td colspan="10">
+    <div class="detail-cell">
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p前端开发-2-done')">
+          <span class="dg-arrow" id="da-p前端开发-2-done">&#9654;</span>
+          当月已完成任务 (0项)
+        </div>
+        <div class="dg-body" id="dg-p前端开发-2-done">
+          <span style="color:#aaa">无</span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p前端开发-2-doing')">
+          <span class="dg-arrow" id="da-p前端开发-2-doing">&#9654;</span>
+          进行中任务 (7+4项)
+        </div>
+        <div class="dg-body" id="dg-p前端开发-2-doing">
+          <span style="margin-right:10px"><a class="tlink" href="#">#294521</a> 商城3.0/26年董店系统专项-vue3升级h5路由改造-赵梓旭 <span style="color:#aaa">(0h/35h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#294514</a> 商城3.0/26年董店系统专项-滑块sdk vue3改造 <span style="color:#aaa">(0h/35h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#294513</a> 商城3.0/26年董店系统专项-登录模块Vue3改造 <span style="color:#aaa">(0h/35h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#294511</a> 商城3.0/26年董店系统专项-专题模版模块Vue3改造 <span style="color:#aaa">(0h/35h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#294510</a> 商城3.0/26年董店系统专项-商品详情模块Vue3改造 <span style="color:#aaa">(0h/35h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#294500</a> 商城3.0/26年董店系统专项-账户模块Vue3改造 <span style="color:#aaa">(0h/35h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#294499</a> 商城3.0/26年董店系统专项-vue3升级全项目模块引入方式/vue3-api改造 <span style="color:#aaa">(0h/35h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295625</a> 6月版本测试用例评审-赵梓旭 <span style="color:#aaa">(0h/2h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295619</a> 6月版本技术方案设计与技术评审-赵梓旭 <span style="color:#aaa">(0h/4h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295613</a> 6月版本需求评审-赵梓旭 <span style="color:#aaa">(0h/4h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295597</a> 【前端】珠海政策基于商品表决定是否参与国补 <span style="color:#aaa">(0h/20h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p前端开发-2-bug')">
+          <span class="dg-arrow" id="da-p前端开发-2-bug">&#9654;</span>
+          Bug (0解决 + 0活跃)
+        </div>
+        <div class="dg-body" id="dg-p前端开发-2-bug">
+          <span style="color:#aaa">暂无Bug明细数据</span>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr><tr style="cursor:pointer" onclick="togglePerson('p前端开发-3')">
+  <td class="idx-col">4</td>
+  <td class="name-col">徐燕雯</td>
+  <td class="num-col">8</td>
+  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:0.0%;background:#ef4444"></div></div><span class="pbar-pct pct-low">0.0%</span></div></td>
+  <td class="num-col hrs-total">121.0h</td>
+  <td class="num-col hrs-done">0h</td>
+  <td class="num-col hrs-est">121.0h</td>
+  <td class="num-col hrs-spent">0.0h</td>
+  <td class="num-col hrs-left">121.0h</td>
+  <td><span class="tag tag-slow">迟缓</span></td>
+</tr>
+<tr id="detail-p前端开发-3" class="detail-row">
+  <td colspan="10">
+    <div class="detail-cell">
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p前端开发-3-done')">
+          <span class="dg-arrow" id="da-p前端开发-3-done">&#9654;</span>
+          当月已完成任务 (0项)
+        </div>
+        <div class="dg-body" id="dg-p前端开发-3-done">
+          <span style="color:#aaa">无</span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p前端开发-3-doing')">
+          <span class="dg-arrow" id="da-p前端开发-3-doing">&#9654;</span>
+          进行中任务 (0+8项)
+        </div>
+        <div class="dg-body" id="dg-p前端开发-3-doing">
+          <span style="margin-right:10px"><a class="tlink" href="#">#295624</a> 6月版本测试用例评审-徐燕雯 <span style="color:#aaa">(0h/2h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295617</a> 6月版本技术方案设计与技术评审-徐燕雯 <span style="color:#aaa">(0h/4h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295612</a> 6月版本需求评审-徐燕雯 <span style="color:#aaa">(0h/4h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295609</a> 【前端】风控模型调整第三期-风控系统 <span style="color:#aaa">(0h/16h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295603</a> 【用户端】买赠赠实物活动-管理端 <span style="color:#aaa">(0h/20h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295602</a> 【用户端】买赠赠实物活动-全员销售 <span style="color:#aaa">(0h/20h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295596</a> 【前端】银企直联二期 <span style="color:#aaa">(0h/20h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#294516</a> 商城3.0/26年董店系统专项-vue3升级提测全模块自测-徐燕雯 <span style="color:#aaa">(0h/35h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p前端开发-3-bug')">
+          <span class="dg-arrow" id="da-p前端开发-3-bug">&#9654;</span>
+          Bug (0解决 + 0活跃)
+        </div>
+        <div class="dg-body" id="dg-p前端开发-3-bug">
+          <span style="color:#aaa">暂无Bug明细数据</span>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr><tr style="cursor:pointer" onclick="togglePerson('p前端开发-4')">
+  <td class="idx-col">5</td>
+  <td class="name-col">万嘉良</td>
+  <td class="num-col">9</td>
+  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:0.0%;background:#ef4444"></div></div><span class="pbar-pct pct-low">0.0%</span></div></td>
+  <td class="num-col hrs-total">113.0h</td>
+  <td class="num-col hrs-done">0h</td>
+  <td class="num-col hrs-est">113.0h</td>
+  <td class="num-col hrs-spent">0.0h</td>
+  <td class="num-col hrs-left">113.0h</td>
+  <td><span class="tag tag-slow">迟缓</span></td>
+</tr>
+<tr id="detail-p前端开发-4" class="detail-row">
+  <td colspan="10">
+    <div class="detail-cell">
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p前端开发-4-done')">
+          <span class="dg-arrow" id="da-p前端开发-4-done">&#9654;</span>
+          当月已完成任务 (0项)
+        </div>
+        <div class="dg-body" id="dg-p前端开发-4-done">
+          <span style="color:#aaa">无</span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p前端开发-4-doing')">
+          <span class="dg-arrow" id="da-p前端开发-4-doing">&#9654;</span>
+          进行中任务 (0+9项)
+        </div>
+        <div class="dg-body" id="dg-p前端开发-4-doing">
+          <span style="margin-right:10px"><a class="tlink" href="#">#295623</a> 6月版本测试用例评审-万嘉良 <span style="color:#aaa">(0h/2h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295618</a> 6月版本技术方案设计与技术评审-万嘉良 <span style="color:#aaa">(0h/4h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295611</a> 6月版本需求评审-万嘉良 <span style="color:#aaa">(0h/4h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295610</a> 【前端】管理端搜索页分享文案调整 <span style="color:#aaa">(0h/4h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295608</a> 【前端】风控模型调整第三期-管理端 <span style="color:#aaa">(0h/16h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295607</a> 【前端】2026珠海OTO国补审计 <span style="color:#aaa">(0h/16h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295606</a> 【前端】珠海国补增加安装时间提醒 <span style="color:#aaa">(0h/16h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295605</a> 【前端】脱谷机需求迭代 <span style="color:#aaa">(0h/16h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#294515</a> 商城3.0/26年董店系统专项-vue3升级提测全模块自测-万嘉良 <span style="color:#aaa">(0h/35h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p前端开发-4-bug')">
+          <span class="dg-arrow" id="da-p前端开发-4-bug">&#9654;</span>
+          Bug (0解决 + 0活跃)
+        </div>
+        <div class="dg-body" id="dg-p前端开发-4-bug">
+          <span style="color:#aaa">暂无Bug明细数据</span>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr><tr style="cursor:pointer" onclick="togglePerson('p前端开发-5')">
+  <td class="idx-col">6</td>
+  <td class="name-col">韦福忠</td>
+  <td class="num-col">3</td>
+  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:0.0%;background:#ef4444"></div></div><span class="pbar-pct pct-low">0.0%</span></div></td>
+  <td class="num-col hrs-total">28.0h</td>
+  <td class="num-col hrs-done">0h</td>
+  <td class="num-col hrs-est">28.0h</td>
+  <td class="num-col hrs-spent">10.0h</td>
+  <td class="num-col hrs-left">18.0h</td>
+  <td><span class="tag tag-slow">迟缓</span></td>
+</tr>
+<tr id="detail-p前端开发-5" class="detail-row">
+  <td colspan="10">
+    <div class="detail-cell">
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p前端开发-5-done')">
+          <span class="dg-arrow" id="da-p前端开发-5-done">&#9654;</span>
+          当月已完成任务 (0项)
+        </div>
+        <div class="dg-body" id="dg-p前端开发-5-done">
+          <span style="color:#aaa">无</span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p前端开发-5-doing')">
+          <span class="dg-arrow" id="da-p前端开发-5-doing">&#9654;</span>
+          进行中任务 (2+0项)
+        </div>
+        <div class="dg-body" id="dg-p前端开发-5-doing">
+          <span style="margin-right:10px"><a class="tlink" href="#">#295604</a> 【前端】修改物流单 <span style="color:#aaa">(6h/8h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295598</a> 【前端】企业购认款查询限制调整 <span style="color:#aaa">(4h/20h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p前端开发-5-bug')">
+          <span class="dg-arrow" id="da-p前端开发-5-bug">&#9654;</span>
+          Bug (0解决 + 0活跃)
+        </div>
+        <div class="dg-body" id="dg-p前端开发-5-bug">
+          <span style="color:#aaa">暂无Bug明细数据</span>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr></tbody></table></div></div>
+<div class="role-section" id="rsec-测试"><div class="rs-head"><span class="rs-bar" style="background:#10b981"></span><span>测试</span><span class="rs-sub">7人 · 当月完成 8 任务 · 消耗 160.0h</span></div><div class="table-wrap"><table class="ptable"><thead><tr><th>#</th><th>人员</th><th>总任务</th><th>完成率</th><th>总工时</th><th>已完成消耗</th><th>未完成预估</th><th>未完成已耗</th><th>未完剩余</th><th>效率</th></tr></thead><tbody><tr style="cursor:pointer" onclick="togglePerson('p测试-0')">
+  <td class="idx-col">1</td>
+  <td class="name-col">黄碧莹</td>
+  <td class="num-col">16</td>
+  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:51.3%;background:#2563eb"></div></div><span class="pbar-pct pct-mid">51.3%</span></div></td>
+  <td class="num-col hrs-total">263.0h</td>
+  <td class="num-col hrs-done">135.0h</td>
+  <td class="num-col hrs-est">128.0h</td>
+  <td class="num-col hrs-spent">0.0h</td>
+  <td class="num-col hrs-left">128.0h</td>
+  <td><span class="tag tag-norm">正常</span></td>
+</tr>
+<tr id="detail-p测试-0" class="detail-row">
+  <td colspan="10">
+    <div class="detail-cell">
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p测试-0-done')">
+          <span class="dg-arrow" id="da-p测试-0-done">&#9654;</span>
+          当月已完成任务 (6项)
+        </div>
+        <div class="dg-body" id="dg-p测试-0-done">
+          <span style="margin-right:10px"><a class="tlink" href="#">#295784</a> 【测试】6月版本测试用例评审-黄碧莹 <span style="color:#aaa">(5h/5h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#288195</a> H5 兼容能力建设研发-需求自测 <span style="color:#aaa">(30h/30h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#288194</a> H5 兼容能力建设研发-需求实现 <span style="color:#aaa">(30h/30h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#288193</a> H5 兼容能力建设研发-方案调研 <span style="color:#aaa">(20h/20h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#288192</a> H5 兼容能力建设研发-需求设计 <span style="color:#aaa">(20h/20h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#288108</a> 【测试】董店jdk21框架升级-黄碧莹 <span style="color:#aaa">(30h/30h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p测试-0-doing')">
+          <span class="dg-arrow" id="da-p测试-0-doing">&#9654;</span>
+          进行中任务 (10+0项)
+        </div>
+        <div class="dg-body" id="dg-p测试-0-doing">
+          <span style="margin-right:10px"><a class="tlink" href="#">#295783</a> 【测试】买赠赠实物活动-黄碧莹 <span style="color:#aaa">(0h/20h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#287916</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-分享券-黄碧莹 <span style="color:#aaa">(0h/12h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#287915</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-任务中心-黄碧莹 <span style="color:#aaa">(0h/12h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#287914</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-店铺信息-黄碧莹 <span style="color:#aaa">(0h/12h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#287913</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试 <span style="color:#aaa">(0h/12h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#287912</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试【国补】 <span style="color:#aaa">(0h/12h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#287911</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-以旧换新-黄碧莹 <span style="color:#aaa">(0h/12h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#287910</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试 -试用活动-黄碧莹 <span style="color:#aaa">(0h/12h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#287909</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-发票-黄碧莹 <span style="color:#aaa">(0h/12h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#287908</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-售后-黄碧莹 <span style="color:#aaa">(0h/12h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p测试-0-bug')">
+          <span class="dg-arrow" id="da-p测试-0-bug">&#9654;</span>
+          Bug (0解决 + 0活跃)
+        </div>
+        <div class="dg-body" id="dg-p测试-0-bug">
+          <span style="color:#aaa">暂无Bug明细数据</span>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr><tr style="cursor:pointer" onclick="togglePerson('p测试-1')">
+  <td class="idx-col">2</td>
+  <td class="name-col">王新石</td>
+  <td class="num-col">12</td>
+  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:20.2%;background:#ef4444"></div></div><span class="pbar-pct pct-low">20.2%</span></div></td>
+  <td class="num-col hrs-total">124.0h</td>
+  <td class="num-col hrs-done">25.0h</td>
+  <td class="num-col hrs-est">99.0h</td>
+  <td class="num-col hrs-spent">0.0h</td>
+  <td class="num-col hrs-left">99.0h</td>
+  <td><span class="tag tag-slow">迟缓</span></td>
+</tr>
+<tr id="detail-p测试-1" class="detail-row">
+  <td colspan="10">
+    <div class="detail-cell">
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p测试-1-done')">
+          <span class="dg-arrow" id="da-p测试-1-done">&#9654;</span>
+          当月已完成任务 (2项)
+        </div>
+        <div class="dg-body" id="dg-p测试-1-done">
+          <span style="margin-right:10px"><a class="tlink" href="#">#290649</a> 【测试】脱谷机需求迭代 <span style="color:#aaa">(5h/5h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290624</a> 【测试】2026珠海OTO国补审计 <span style="color:#aaa">(20h/20h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p测试-1-doing')">
+          <span class="dg-arrow" id="da-p测试-1-doing">&#9654;</span>
+          进行中任务 (9+1项)
+        </div>
+        <div class="dg-body" id="dg-p测试-1-doing">
+          <span style="margin-right:10px"><a class="tlink" href="#">#290682</a> 【测试】买赠赠实物活动-管理端-王新石 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290681</a> 【测试】买赠赠实物活动-用户端-王新石 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290643</a> 【测试】企业购认款查询限制调整 <span style="color:#aaa">(0h/10h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290642</a> 【测试】海南国补开票推送时间更改 <span style="color:#aaa">(0h/10h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290626</a> 【测试】搜索页分享文案调整 <span style="color:#aaa">(0h/5h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290622</a> 【测试】同一订单微信/支付宝传相同对外交易号 <span style="color:#aaa">(0h/10h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290616</a> 6月版本测试用例评审-王新石 <span style="color:#aaa">(0h/2h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290613</a> 6月版本技术方案设计与技术评审-王新石 <span style="color:#aaa">(0h/4h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290610</a> 6月版本需求评审-王新石 <span style="color:#aaa">(0h/8h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290648</a> 【测试】26广西国补 <span style="color:#aaa">(0h/20h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p测试-1-bug')">
+          <span class="dg-arrow" id="da-p测试-1-bug">&#9654;</span>
+          Bug (0解决 + 0活跃)
+        </div>
+        <div class="dg-body" id="dg-p测试-1-bug">
+          <span style="color:#aaa">暂无Bug明细数据</span>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr><tr style="cursor:pointer" onclick="togglePerson('p测试-2')">
+  <td class="idx-col">3</td>
+  <td class="name-col">胡丹</td>
+  <td class="num-col">10</td>
+  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:0.0%;background:#ef4444"></div></div><span class="pbar-pct pct-low">0.0%</span></div></td>
+  <td class="num-col hrs-total">129.0h</td>
+  <td class="num-col hrs-done">0h</td>
+  <td class="num-col hrs-est">129.0h</td>
+  <td class="num-col hrs-spent">0.0h</td>
+  <td class="num-col hrs-left">129.0h</td>
+  <td><span class="tag tag-slow">迟缓</span></td>
+</tr>
+<tr id="detail-p测试-2" class="detail-row">
+  <td colspan="10">
+    <div class="detail-cell">
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p测试-2-done')">
+          <span class="dg-arrow" id="da-p测试-2-done">&#9654;</span>
+          当月已完成任务 (0项)
+        </div>
+        <div class="dg-body" id="dg-p测试-2-done">
+          <span style="color:#aaa">无</span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p测试-2-doing')">
+          <span class="dg-arrow" id="da-p测试-2-doing">&#9654;</span>
+          进行中任务 (10+0项)
+        </div>
+        <div class="dg-body" id="dg-p测试-2-doing">
+          <span style="margin-right:10px"><a class="tlink" href="#">#280664</a> 【测试】安徽26交易与核销上送-银商 <span style="color:#aaa">(0h/20h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#280662</a> 【测试】江西交易核销上送与审计-银商 <span style="color:#aaa">(0h/20h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#275117</a> 【测试】重庆审计-银商 <span style="color:#aaa">(0h/25h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290650</a> 【测试】珠海国补增加安装时间提醒 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290646</a> 【测试】修改物流单 <span style="color:#aaa">(0h/10h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290644</a> 【测试】第三方店铺催发货不推oms <span style="color:#aaa">(0h/5h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290620</a> 【测试】珠海政策基于商品表决定是否参与国补 <span style="color:#aaa">(0h/20h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290614</a> 6月版本测试用例评审-胡丹 <span style="color:#aaa">(0h/2h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290611</a> 6月版本技术方案设计与技术评审-胡丹 <span style="color:#aaa">(0h/4h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290608</a> 6月版本需求评审-胡丹 <span style="color:#aaa">(0h/8h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p测试-2-bug')">
+          <span class="dg-arrow" id="da-p测试-2-bug">&#9654;</span>
+          Bug (0解决 + 0活跃)
+        </div>
+        <div class="dg-body" id="dg-p测试-2-bug">
+          <span style="color:#aaa">暂无Bug明细数据</span>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr><tr style="cursor:pointer" onclick="togglePerson('p测试-3')">
+  <td class="idx-col">4</td>
+  <td class="name-col">邹琳</td>
+  <td class="num-col">14</td>
+  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:0.0%;background:#ef4444"></div></div><span class="pbar-pct pct-low">0.0%</span></div></td>
+  <td class="num-col hrs-total">121.0h</td>
+  <td class="num-col hrs-done">0h</td>
+  <td class="num-col hrs-est">121.0h</td>
+  <td class="num-col hrs-spent">0.0h</td>
+  <td class="num-col hrs-left">121.0h</td>
+  <td><span class="tag tag-slow">迟缓</span></td>
+</tr>
+<tr id="detail-p测试-3" class="detail-row">
+  <td colspan="10">
+    <div class="detail-cell">
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p测试-3-done')">
+          <span class="dg-arrow" id="da-p测试-3-done">&#9654;</span>
+          当月已完成任务 (0项)
+        </div>
+        <div class="dg-body" id="dg-p测试-3-done">
+          <span style="color:#aaa">无</span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p测试-3-doing')">
+          <span class="dg-arrow" id="da-p测试-3-doing">&#9654;</span>
+          进行中任务 (12+2项)
+        </div>
+        <div class="dg-body" id="dg-p测试-3-doing">
+          <span style="margin-right:10px"><a class="tlink" href="#">#287934</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-以旧换新-邹琳 <span style="color:#aaa">(0h/8h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#287933</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-商详-邹琳 <span style="color:#aaa">(0h/8h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#287932</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-登录-邹琳 <span style="color:#aaa">(0h/8h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#287931</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-国补 <span style="color:#aaa">(0h/8h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#287930</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-试用活动-邹琳 <span style="color:#aaa">(0h/8h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#287929</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-售后-邹琳 <span style="color:#aaa">(0h/8h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#287928</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-首页-邹琳 <span style="color:#aaa">(0h/8h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#287927</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-任务中心-邹琳 <span style="color:#aaa">(0h/8h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#287926</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-H5旧地址-邹琳 <span style="color:#aaa">(0h/8h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#287925</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-订单-邹琳 <span style="color:#aaa">(0h/8h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#287924</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-社区-邹琳 <span style="color:#aaa">(0h/8h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#287923</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-个人中心-邹琳 <span style="color:#aaa">(0h/8h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295785</a> 【测试】6月版本测试用例评审-邹琳 <span style="color:#aaa">(0h/5h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#295782</a> 【测试】买赠赠实物活动-邹琳 <span style="color:#aaa">(0h/20h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p测试-3-bug')">
+          <span class="dg-arrow" id="da-p测试-3-bug">&#9654;</span>
+          Bug (0解决 + 0活跃)
+        </div>
+        <div class="dg-body" id="dg-p测试-3-bug">
+          <span style="color:#aaa">暂无Bug明细数据</span>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr><tr style="cursor:pointer" onclick="togglePerson('p测试-4')">
+  <td class="idx-col">5</td>
+  <td class="name-col">余之煜</td>
+  <td class="num-col">9</td>
+  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:0.0%;background:#ef4444"></div></div><span class="pbar-pct pct-low">0.0%</span></div></td>
+  <td class="num-col hrs-total">94.0h</td>
+  <td class="num-col hrs-done">0h</td>
+  <td class="num-col hrs-est">94.0h</td>
+  <td class="num-col hrs-spent">0.0h</td>
+  <td class="num-col hrs-left">94.0h</td>
+  <td><span class="tag tag-slow">迟缓</span></td>
+</tr>
+<tr id="detail-p测试-4" class="detail-row">
+  <td colspan="10">
+    <div class="detail-cell">
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p测试-4-done')">
+          <span class="dg-arrow" id="da-p测试-4-done">&#9654;</span>
+          当月已完成任务 (0项)
+        </div>
+        <div class="dg-body" id="dg-p测试-4-done">
+          <span style="color:#aaa">无</span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p测试-4-doing')">
+          <span class="dg-arrow" id="da-p测试-4-doing">&#9654;</span>
+          进行中任务 (0+8项)
+        </div>
+        <div class="dg-body" id="dg-p测试-4-doing">
+          <span style="margin-right:10px"><a class="tlink" href="#">#290684</a> 【测试】买赠赠实物活动-用户端-余之煜 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290683</a> 【测试】买赠赠实物活动-管理端-余之煜 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290647</a> 【测试】短信整改四期 <span style="color:#aaa">(0h/20h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290625</a> 【测试】风控模型调整第三期 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290619</a> 【测试】银企直联二期 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290615</a> 6月版本测试用例评审-余之煜 <span style="color:#aaa">(0h/2h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290612</a> 6月版本技术方案设计与技术评审-余之煜 <span style="color:#aaa">(0h/4h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#290609</a> 6月版本需求评审-余之煜 <span style="color:#aaa">(0h/8h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p测试-4-bug')">
+          <span class="dg-arrow" id="da-p测试-4-bug">&#9654;</span>
+          Bug (0解决 + 0活跃)
+        </div>
+        <div class="dg-body" id="dg-p测试-4-bug">
+          <span style="color:#aaa">暂无Bug明细数据</span>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr><tr style="cursor:pointer" onclick="togglePerson('p测试-5')">
+  <td class="idx-col">6</td>
+  <td class="name-col">邹倩如</td>
+  <td class="num-col">8</td>
+  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:0.0%;background:#ef4444"></div></div><span class="pbar-pct pct-low">0.0%</span></div></td>
+  <td class="num-col hrs-total">80.0h</td>
+  <td class="num-col hrs-done">0h</td>
+  <td class="num-col hrs-est">80.0h</td>
+  <td class="num-col hrs-spent">0.0h</td>
+  <td class="num-col hrs-left">80.0h</td>
+  <td><span class="tag tag-slow">迟缓</span></td>
+</tr>
+<tr id="detail-p测试-5" class="detail-row">
+  <td colspan="10">
+    <div class="detail-cell">
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p测试-5-done')">
+          <span class="dg-arrow" id="da-p测试-5-done">&#9654;</span>
+          当月已完成任务 (0项)
+        </div>
+        <div class="dg-body" id="dg-p测试-5-done">
+          <span style="color:#aaa">无</span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p测试-5-doing')">
+          <span class="dg-arrow" id="da-p测试-5-doing">&#9654;</span>
+          进行中任务 (8+0项)
+        </div>
+        <div class="dg-body" id="dg-p测试-5-doing">
+          <span style="margin-right:10px"><a class="tlink" href="#">#288066</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-H5旧地址兼容 <span style="color:#aaa">(0h/10h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#288065</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-商详 <span style="color:#aaa">(0h/10h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#288064</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-秒杀 <span style="color:#aaa">(0h/10h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#288063</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-拼团 <span style="color:#aaa">(0h/10h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#288062</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-专题模板 <span style="color:#aaa">(0h/10h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#288061</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-支付 <span style="color:#aaa">(0h/10h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#288060</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-分类 <span style="color:#aaa">(0h/10h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#288059</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-首页 <span style="color:#aaa">(0h/10h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p测试-5-bug')">
+          <span class="dg-arrow" id="da-p测试-5-bug">&#9654;</span>
+          Bug (0解决 + 0活跃)
+        </div>
+        <div class="dg-body" id="dg-p测试-5-bug">
+          <span style="color:#aaa">暂无Bug明细数据</span>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr><tr style="cursor:pointer" onclick="togglePerson('p测试-6')">
+  <td class="idx-col">7</td>
+  <td class="name-col">张锐</td>
+  <td class="num-col">9</td>
+  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:0.0%;background:#ef4444"></div></div><span class="pbar-pct pct-low">0.0%</span></div></td>
+  <td class="num-col hrs-total">90.0h</td>
+  <td class="num-col hrs-done">0h</td>
+  <td class="num-col hrs-est">90.0h</td>
+  <td class="num-col hrs-spent">0.0h</td>
+  <td class="num-col hrs-left">90.0h</td>
+  <td><span class="tag tag-slow">迟缓</span></td>
+</tr>
+<tr id="detail-p测试-6" class="detail-row">
+  <td colspan="10">
+    <div class="detail-cell">
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p测试-6-done')">
+          <span class="dg-arrow" id="da-p测试-6-done">&#9654;</span>
+          当月已完成任务 (0项)
+        </div>
+        <div class="dg-body" id="dg-p测试-6-done">
+          <span style="color:#aaa">无</span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p测试-6-doing')">
+          <span class="dg-arrow" id="da-p测试-6-doing">&#9654;</span>
+          进行中任务 (9+0项)
+        </div>
+        <div class="dg-body" id="dg-p测试-6-doing">
+          <span style="margin-right:10px"><a class="tlink" href="#">#288058</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-个人中心-张锐 <span style="color:#aaa">(0h/10h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#288057</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-登录-张锐 <span style="color:#aaa">(0h/10h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#288056</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-设置-张锐 <span style="color:#aaa">(0h/10h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#288055</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-购物车-张锐 <span style="color:#aaa">(0h/10h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#288054</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-支付-张锐 <span style="color:#aaa">(0h/10h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#288053</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-专题模板-张锐 <span style="color:#aaa">(0h/10h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#288052</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-秒杀-张锐 <span style="color:#aaa">(0h/10h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#288051</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-订单-张锐 <span style="color:#aaa">(0h/10h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#288050</a> 【测试】基于董店VUE3框架升级全量页面功能验证与兼容性专项测试-搜索-张锐 <span style="color:#aaa">(0h/10h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p测试-6-bug')">
+          <span class="dg-arrow" id="da-p测试-6-bug">&#9654;</span>
+          Bug (0解决 + 0活跃)
+        </div>
+        <div class="dg-body" id="dg-p测试-6-bug">
+          <span style="color:#aaa">暂无Bug明细数据</span>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr></tbody></table></div></div>
+<div class="charts">
+<div class="chart-box"><h3>人员消耗工时（已完成+进行中+剩余）</h3>
+<div class="chart-canvas"><canvas id="chart1"></canvas></div></div>
+<div class="chart-box"><h3>各角色完成 vs 进行中</h3>
+<div class="chart-canvas"><canvas id="chart2"></canvas></div></div>
+</div>
+<script>
+function toggleRole(roleKey){
+    // 切换角色tab激活状态
+    document.querySelectorAll('.role-tab').forEach(function(el){
+        el.classList.remove('active');
+    });
+    var tab=document.getElementById('rtab-'+roleKey);
+    if(tab) tab.classList.add('active');
+    // 切换区块显示
+    document.querySelectorAll('.role-section').forEach(function(el){
+        el.classList.remove('visible');
+    });
+    var sec=document.getElementById('rsec-'+roleKey);
+    if(sec) sec.classList.add('visible');
+}
+function togglePerson(pid){
+    var row=document.getElementById('detail-'+pid);
+    if(row){ row.classList.toggle('expanded'); }
+}
+function toggleGroup(gid){
+    var body=document.getElementById('dg-'+gid);
+    var arrow=document.getElementById('da-'+gid);
+    if(body){ body.classList.toggle('show'); }
+    if(arrow){ arrow.classList.toggle('open'); }
+}
+// 默认展开第一个角色
+document.addEventListener('DOMContentLoaded',function(){
+    var firstRole=document.querySelector('.role-tab');
+    if(firstRole) firstRole.click();
+});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script>
+(function(){
+Chart.defaults.font.family='-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif';
+Chart.defaults.font.size=11;
+Chart.defaults.color='#666';
+var ctx1=document.getElementById('chart1').getContext('2d');
+new Chart(ctx1,{type:'bar',data:{labels:["\u7a0b\u8fce\u5a23", "\u7f57\u54f2\u7476", "\u5218\u6653\u4e39", "\u5218\u7d20\u7d20", "\u6768\u674e\u96f7", "\u674e\u6c38\u9e4f", "\u66fe\u5baa\u8d35", "\u53e4\u5b5f\u6770", "\u674e\u6cbb\u56fd", "\u674e\u5cb3\u4e1c", "\u672a\u5206\u914d", "\u83ab\u6d4e\u8d22", "\u5362\u5353\u6977", "\u5f20\u5f00\u6587", "\u5468\u68a6\u6770", "\u6881\u80dc\u82b3", "\u6f58\u56fd\u5e73", "\u5468\u7fa4\u5cf0", "\u6c6a\u4f1f", "\u5f6d\u8861", "\u8d75\u6893\u65ed", "\u5f90\u71d5\u96ef", "\u4e07\u5609\u826f", "\u97e6\u798f\u5fe0", "\u9ec4\u78a7\u83b9", "\u738b\u65b0\u77f3", "\u80e1\u4e39", "\u90b9\u7433", "\u4f59\u4e4b\u715c", "\u90b9\u5029\u5982", "\u5f20\u9510"],datasets:[{label:'已完成消耗',data:[96.0, 10.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 207.0, 0, 0, 0, 0, 0, 135.0, 25.0, 0, 0, 0, 0, 0],backgroundColor:'#10b981'},{label:'进行中已耗',data:[32.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 7.0, 0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],backgroundColor:'#3b82f6'},{label:'进行中剩余',data:[16.0, 15.0, 120.0, 60.0, 240.0, 160.0, 164.0, 132.0, 108.0, 100.0, 0.0, 28.0, 32.0, 16.0, 16.0, 9.0, 16.0, 30.0, 0.0, 46.0, 275.0, 121.0, 113.0, 18.0, 128.0, 99.0, 129.0, 121.0, 94.0, 80.0, 90.0],backgroundColor:'#d1d5db'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'},title:{display:false}},scales:{x:{stacked:true},y:{stacked:true,title:{display:true,text:'工时(h)'}}}}});
+var ctx2=document.getElementById('chart2').getContext('2d');
+new Chart(ctx2,{type:'bar',data:{labels:["\u4ea7\u54c1", "\u540e\u7aef\u5f00\u53d1", "\u524d\u7aef\u5f00\u53d1", "\u6d4b\u8bd5"],datasets:[{label:'已完成消耗',data:[106.0, 0, 207.0, 160.0],backgroundColor:'#10b981'},{label:'进行中预估',data:[483.0, 818.0, 583.0, 741.0],backgroundColor:'#f59e0b'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'},title:{display:false}},scales:{y:{title:{display:true,text:'工时(h)'}}}}});
+})();
+</script>
+</body></html>

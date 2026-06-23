@@ -297,6 +297,7 @@ function togglePerson(pid){
         arrow.classList.add("expanded");
         tasks.style.display = "";
     }
+}
 
 function toggleStoryDetail(){
     var body = document.getElementById("storyDetailBody");
@@ -312,6 +313,21 @@ function toggleStoryDetail(){
         arrow.classList.add("expanded");
         body.style.display = "block";
     }
+}
+
+/* 从禅道刷新最新数据（需本地刷新服务支持） */
+function triggerRefresh(){
+    var btn = document.querySelector('.refresh-btn');
+    if(btn){ btn.disabled = true; btn.innerHTML = '⏳ 刷新中...'; }
+    fetch('http://127.0.0.1:8899/refresh')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+        setTimeout(function(){ location.reload(); }, 7000);
+    })
+    .catch(function(e){
+        /* 服务未启动，2秒后直接刷新页面 */
+        setTimeout(function(){ location.reload(); }, 2000);
+    });
 }
 
 /* ===== 图表1：需求阶段分布（横向柱状图） ===== */
@@ -358,7 +374,7 @@ function toggleStoryDetail(){
     var stats = {};
     ITER_DATA.tasks.forEach(function(t){ var s = t._st || "wait"; stats[s] = (stats[s] || 0) + 1; });
     var labels = {wait:"待处理",doing:"进行中",done:"已完成",pause:"暂停",cancel:"取消"};
-    var entries = Object.entries(stats).map(function(kv){ return { l: labels[kv[0]] || kv[0], v: kv[1] }; });
+    var entries = Object.entries(stats).map(function(kv){ var k=kv[0],v=kv[1]; return { l: labels[k]||k, v: v }; });
     if(entries.length === 0) return;
     var colors = {"待处理":"#ef4444","进行中":"#22c55e","已完成":"#3b82f6","暂停":"#f59e0b","取消":"#6b7280"};
     new Chart(cv, {
@@ -668,7 +684,7 @@ def make_report_html(data, today, out_path):
         '<h1>%s 【2026】执行进展分析报告</h1>'
         '<div class="sub">执行ID: %s | %s ~ %s | 生成时间: %s | %s</div>'
         '<a class="home-btn" href="../index.html">&#127968; 返回首页</a>'
-        '<a class="refresh-btn" href="#">&#128260; 实时刷新禅道数据</a></div>') % (
+        '<a class="refresh-btn" href="#" onclick="triggerRefresh();return false;">&#128260; 实时刷新禅道数据</a></div>') % (
         ename, eid, begin, end, today, pname))
 
     # 4. 统计卡片

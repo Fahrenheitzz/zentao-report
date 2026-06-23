@@ -6,11 +6,20 @@
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:#f0f2f5;color:#333;padding:20px;min-width:1100px}
 
 /* 头部 */
-.header{background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);color:#fff;border-radius:16px;padding:32px 36px;margin-bottom:24px;position:relative;overflow:hidden}
+.header{background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);color:#fff;border-radius:16px;padding:24px 32px;margin-bottom:24px;position:relative;overflow:hidden}
 .header::before{content:'';position:absolute;top:-50%;right:-10%;width:400px;height:400px;background:radial-gradient(circle,rgba(79,172,254,.15),transparent);border-radius:50%}
-.header h1{font-size:28px;font-weight:800;margin-bottom:8px;position:relative;z-index:1}
-.header .sub{font-size:13px;color:rgba(255,255,255,.65);margin-bottom:18px;position:relative;z-index:1}
-.refresh-btn{display:inline-block;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.22);padding:5px 16px;border-radius:20px;font-size:12px;cursor:pointer;transition:.2s;text-decoration:none;position:relative;z-index:1}
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;position:relative;z-index:1}
+.header-left{display:flex;align-items:center;gap:14px;min-width:0}
+.header-center{text-align:center;flex:1;min-width:0}
+.header-right{flex-shrink:0}
+.home-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 16px;
+    background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+    color:#fff;border-radius:20px;font-size:12px;text-decoration:none;
+    transition:.25s;white-space:nowrap;flex-shrink:0}
+.home-btn:hover{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.35)}
+.header h1{font-size:26px;font-weight:800;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.header .sub{font-size:12px;color:rgba(255,255,255,.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.refresh-btn{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.22);padding:6px 18px;border-radius:20px;font-size:12px;cursor:pointer;transition:.2s;text-decoration:none;white-space:nowrap;flex-shrink:0}
 .refresh-btn:hover{background:rgba(255,255,255,.22)}
 
 /* 概览卡片 */
@@ -90,22 +99,31 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 </head><body>
 
 <div class="header">
-  <h1>2026年6月 团队产出效率分析</h1>
-  <p class="sub">功能:角色分组 · 全量迭代 · 2026-06-18 18:36:44</p>
-  <a class="refresh-btn" href="#" onclick="location.reload()">⟳ 实时刷新</a>
+  <div class="header-inner">
+    <div class="header-left">
+      <a class="home-btn" href="../index.html">🏠 返回报告中心</a>
+    </div>
+    <div class="header-center">
+      <h1>2026年6月 团队产出效率分析</h1>
+      <p class="sub">功能:角色分组 · 全量迭代 · 2026-06-22 14:42:14</p>
+    </div>
+    <div class="header-right">
+      <a class="refresh-btn" href="#" onclick="triggerRefresh();return false;">⟳ 实时刷新</a>
+    </div>
+  </div>
 </div>
 <div class="overview">
-<div class="ov-card"><div class="ov-num c-green">26</div><div class="ov-lbl">当月已完成</div></div>
-<div class="ov-card"><div class="ov-num c-orange">191</div><div class="ov-lbl">进行中</div></div>
-<div class="ov-card"><div class="ov-num c-dark">31</div><div class="ov-lbl">参与人员</div></div>
-<div class="ov-card"><div class="ov-num c-blue">473.0h</div><div class="ov-lbl">总消耗工时</div></div>
-<div class="ov-card"><div class="ov-num c-blue">2576.0h</div><div class="ov-lbl">剩余工时</div></div>
+<div class="ov-card"><div class="ov-num c-green">30</div><div class="ov-lbl">当月已完成</div></div>
+<div class="ov-card"><div class="ov-num c-orange">194</div><div class="ov-lbl">进行中</div></div>
+<div class="ov-card"><div class="ov-num c-dark">32</div><div class="ov-lbl">参与人员</div></div>
+<div class="ov-card"><div class="ov-num c-blue">569.0h</div><div class="ov-lbl">总消耗工时</div></div>
+<div class="ov-card"><div class="ov-num c-blue">2652.0h</div><div class="ov-lbl">剩余工时</div></div>
 <div class="ov-card"><div class="ov-num c-red">27</div><div class="ov-lbl">超期任务</div></div>
 </div>
 <div class="role-tabs">
-<div class="role-tab" id="rtab-产品" onclick="toggleRole('产品')"><div class="rt-name"><span class="rt-dot" style="background:#8b5cf6"></span>产品</div><div class="rt-info">5人 · 完成<span>6</span>个/106.0h · 进行中<span class="rt-doing">32</span>个</div></div><div class="role-tab" id="rtab-后端开发" onclick="toggleRole('后端开发')"><div class="rt-name"><span class="rt-dot" style="background:#3b82f6"></span>后端开发</div><div class="rt-info">13人 · 完成<span>0</span>个/0.0h · 进行中<span class="rt-doing">56</span>个</div></div><div class="role-tab" id="rtab-前端开发" onclick="toggleRole('前端开发')"><div class="rt-name"><span class="rt-dot" style="background:#06b6d4"></span>前端开发</div><div class="rt-info">6人 · 完成<span>12</span>个/207.0h · 进行中<span class="rt-doing">34</span>个</div></div><div class="role-tab" id="rtab-测试" onclick="toggleRole('测试')"><div class="rt-name"><span class="rt-dot" style="background:#10b981"></span>测试</div><div class="rt-info">7人 · 完成<span>8</span>个/160.0h · 进行中<span class="rt-doing">69</span>个</div></div>
+<div class="role-tab" id="rtab-产品" onclick="toggleRole('产品')"><div class="rt-name"><span class="rt-dot" style="background:#8b5cf6"></span>产品</div><div class="rt-info">6人 · 完成<span>10</span>个/202.0h · 进行中<span class="rt-doing">35</span>个</div></div><div class="role-tab" id="rtab-后端开发" onclick="toggleRole('后端开发')"><div class="rt-name"><span class="rt-dot" style="background:#3b82f6"></span>后端开发</div><div class="rt-info">13人 · 完成<span>0</span>个/0.0h · 进行中<span class="rt-doing">56</span>个</div></div><div class="role-tab" id="rtab-前端开发" onclick="toggleRole('前端开发')"><div class="rt-name"><span class="rt-dot" style="background:#06b6d4"></span>前端开发</div><div class="rt-info">6人 · 完成<span>12</span>个/207.0h · 进行中<span class="rt-doing">34</span>个</div></div><div class="role-tab" id="rtab-测试" onclick="toggleRole('测试')"><div class="rt-name"><span class="rt-dot" style="background:#10b981"></span>测试</div><div class="rt-info">7人 · 完成<span>8</span>个/160.0h · 进行中<span class="rt-doing">69</span>个</div></div>
 </div>
-<div class="role-section" id="rsec-产品"><div class="rs-head"><span class="rs-bar" style="background:#8b5cf6"></span><span>产品</span><span class="rs-sub">5人 · 当月完成 6 任务 · 消耗 106.0h</span></div><div class="table-wrap"><table class="ptable"><thead><tr><th>#</th><th>人员</th><th>总任务</th><th>完成率</th><th>总工时</th><th>已完成消耗</th><th>未完成预估</th><th>未完成已耗</th><th>未完剩余</th><th>效率</th></tr></thead><tbody><tr style="cursor:pointer" onclick="togglePerson('p产品-0')">
+<div class="role-section" id="rsec-产品"><div class="rs-head"><span class="rs-bar" style="background:#8b5cf6"></span><span>产品</span><span class="rs-sub">6人 · 当月完成 10 任务 · 消耗 202.0h</span></div><div class="table-wrap"><table class="ptable"><thead><tr><th>#</th><th>人员</th><th>总任务</th><th>完成率</th><th>总工时</th><th>已完成消耗</th><th>未完成预估</th><th>未完成已耗</th><th>未完剩余</th><th>效率</th></tr></thead><tbody><tr style="cursor:pointer" onclick="togglePerson('p产品-0')">
   <td class="idx-col">1</td>
   <td class="name-col">程迎娣</td>
   <td class="num-col">8</td>
@@ -151,14 +169,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
   </td>
 </tr><tr style="cursor:pointer" onclick="togglePerson('p产品-1')">
   <td class="idx-col">2</td>
-  <td class="name-col">罗哲瑶</td>
-  <td class="num-col">2</td>
-  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:40.0%;background:#2563eb"></div></div><span class="pbar-pct pct-mid">40.0%</span></div></td>
-  <td class="num-col hrs-total">25.0h</td>
-  <td class="num-col hrs-done">10.0h</td>
-  <td class="num-col hrs-est">15.0h</td>
+  <td class="name-col">张旭</td>
+  <td class="num-col">7</td>
+  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:55.8%;background:#2563eb"></div></div><span class="pbar-pct pct-mid">55.8%</span></div></td>
+  <td class="num-col hrs-total">172.0h</td>
+  <td class="num-col hrs-done">96.0h</td>
+  <td class="num-col hrs-est">76.0h</td>
   <td class="num-col hrs-spent">0.0h</td>
-  <td class="num-col hrs-left">15.0h</td>
+  <td class="num-col hrs-left">76.0h</td>
   <td><span class="tag tag-norm">正常</span></td>
 </tr>
 <tr id="detail-p产品-1" class="detail-row">
@@ -167,19 +185,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
       <div class="detail-group">
         <div class="dg-title" onclick="toggleGroup('p产品-1-done')">
           <span class="dg-arrow" id="da-p产品-1-done">&#9654;</span>
-          当月已完成任务 (1项)
+          当月已完成任务 (4项)
         </div>
         <div class="dg-body" id="dg-p产品-1-done">
-          <span style="margin-right:10px"><a class="tlink" href="#">#292428</a> 【需求调研】风控模型调整第三期 <span style="color:#aaa">(10h/10h)</span></span>
+          <span style="margin-right:10px"><a class="tlink" href="#">#296236</a> 【UI设计】线上国补资格解绑流程调整 <span style="color:#aaa">(24h/24h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#296235</a> 【UI设计】买赠赠实物活动 <span style="color:#aaa">(40h/40h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#296226</a> 【UI设计】珠海国补增加安装时间提醒 <span style="color:#aaa">(24h/24h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#296219</a> 【UI设计】6月版本需求评审 <span style="color:#aaa">(8h/8h)</span></span>
         </div>
       </div>
       <div class="detail-group">
         <div class="dg-title" onclick="toggleGroup('p产品-1-doing')">
           <span class="dg-arrow" id="da-p产品-1-doing">&#9654;</span>
-          进行中任务 (0+1项)
+          进行中任务 (3+0项)
         </div>
         <div class="dg-body" id="dg-p产品-1-doing">
-          <span style="margin-right:10px"><a class="tlink" href="#">#292444</a> 【需求设计】风控模型调整第三期 <span style="color:#aaa">(0h/15h)</span></span>
+          <span style="margin-right:10px"><a class="tlink" href="#">#296238</a> 【UI设计】优化董店的首页广告位 <span style="color:#aaa">(0h/32h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#296237</a> 【UI设计】董店优化金刚区分类 <span style="color:#aaa">(0h/32h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#296221</a> 【UI设计】6月UI走查 <span style="color:#aaa">(0h/12h)</span></span>
         </div>
       </div>
       <div class="detail-group">
@@ -195,15 +213,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
   </td>
 </tr><tr style="cursor:pointer" onclick="togglePerson('p产品-2')">
   <td class="idx-col">3</td>
-  <td class="name-col">刘晓丹</td>
-  <td class="num-col">8</td>
-  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:0.0%;background:#ef4444"></div></div><span class="pbar-pct pct-low">0.0%</span></div></td>
-  <td class="num-col hrs-total">120.0h</td>
-  <td class="num-col hrs-done">0h</td>
-  <td class="num-col hrs-est">120.0h</td>
+  <td class="name-col">罗哲瑶</td>
+  <td class="num-col">2</td>
+  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:40.0%;background:#2563eb"></div></div><span class="pbar-pct pct-mid">40.0%</span></div></td>
+  <td class="num-col hrs-total">25.0h</td>
+  <td class="num-col hrs-done">10.0h</td>
+  <td class="num-col hrs-est">15.0h</td>
   <td class="num-col hrs-spent">0.0h</td>
-  <td class="num-col hrs-left">120.0h</td>
-  <td><span class="tag tag-slow">迟缓</span></td>
+  <td class="num-col hrs-left">15.0h</td>
+  <td><span class="tag tag-norm">正常</span></td>
 </tr>
 <tr id="detail-p产品-2" class="detail-row">
   <td colspan="10">
@@ -211,19 +229,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
       <div class="detail-group">
         <div class="dg-title" onclick="toggleGroup('p产品-2-done')">
           <span class="dg-arrow" id="da-p产品-2-done">&#9654;</span>
-          当月已完成任务 (0项)
+          当月已完成任务 (1项)
         </div>
         <div class="dg-body" id="dg-p产品-2-done">
-          <span style="color:#aaa">无</span>
+          <span style="margin-right:10px"><a class="tlink" href="#">#292428</a> 【需求调研】风控模型调整第三期 <span style="color:#aaa">(10h/10h)</span></span>
         </div>
       </div>
       <div class="detail-group">
         <div class="dg-title" onclick="toggleGroup('p产品-2-doing')">
           <span class="dg-arrow" id="da-p产品-2-doing">&#9654;</span>
-          进行中任务 (0+8项)
+          进行中任务 (0+1项)
         </div>
         <div class="dg-body" id="dg-p产品-2-doing">
-          <span style="margin-right:10px"><a class="tlink" href="#">#292446</a> 【需求设计】同一订单微信/支付宝传相同对外交易号 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292443</a> 【需求设计】2026珠海OTO国补审计 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292432</a> 【需求设计】珠海政策基于商品表决定是否参与国补 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292431</a> 【需求设计】银企直联二期 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292430</a> 【需求调研】同一订单微信/支付宝传相同对外交易号 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292427</a> 【需求调研】2026珠海OTO国补审计 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292416</a> 【需求调研】珠海政策基于商品表决定是否参与国补 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292415</a> 【需求调研】银企直联二期 <span style="color:#aaa">(0h/15h)</span></span>
+          <span style="margin-right:10px"><a class="tlink" href="#">#292444</a> 【需求设计】风控模型调整第三期 <span style="color:#aaa">(0h/15h)</span></span>
         </div>
       </div>
       <div class="detail-group">
@@ -239,14 +257,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
   </td>
 </tr><tr style="cursor:pointer" onclick="togglePerson('p产品-3')">
   <td class="idx-col">4</td>
-  <td class="name-col">刘素素</td>
-  <td class="num-col">6</td>
+  <td class="name-col">刘晓丹</td>
+  <td class="num-col">8</td>
   <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:0.0%;background:#ef4444"></div></div><span class="pbar-pct pct-low">0.0%</span></div></td>
-  <td class="num-col hrs-total">60.0h</td>
+  <td class="num-col hrs-total">120.0h</td>
   <td class="num-col hrs-done">0h</td>
-  <td class="num-col hrs-est">60.0h</td>
+  <td class="num-col hrs-est">120.0h</td>
   <td class="num-col hrs-spent">0.0h</td>
-  <td class="num-col hrs-left">60.0h</td>
+  <td class="num-col hrs-left">120.0h</td>
   <td><span class="tag tag-slow">迟缓</span></td>
 </tr>
 <tr id="detail-p产品-3" class="detail-row">
@@ -264,10 +282,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
       <div class="detail-group">
         <div class="dg-title" onclick="toggleGroup('p产品-3-doing')">
           <span class="dg-arrow" id="da-p产品-3-doing">&#9654;</span>
-          进行中任务 (0+4项)
+          进行中任务 (0+8项)
         </div>
         <div class="dg-body" id="dg-p产品-3-doing">
-          <span style="margin-right:10px"><a class="tlink" href="#">#292445</a> 【需求设计】搜索页分享文案调整 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292440</a> 【需求设计】26广西国补 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292429</a> 【需求调研】搜索页分享文案调整 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292424</a> 【需求调研】26广西国补 <span style="color:#aaa">(0h/15h)</span></span>
+          <span style="margin-right:10px"><a class="tlink" href="#">#292446</a> 【需求设计】同一订单微信/支付宝传相同对外交易号 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292443</a> 【需求设计】2026珠海OTO国补审计 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292432</a> 【需求设计】珠海政策基于商品表决定是否参与国补 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292431</a> 【需求设计】银企直联二期 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292430</a> 【需求调研】同一订单微信/支付宝传相同对外交易号 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292427</a> 【需求调研】2026珠海OTO国补审计 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292416</a> 【需求调研】珠海政策基于商品表决定是否参与国补 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292415</a> 【需求调研】银企直联二期 <span style="color:#aaa">(0h/15h)</span></span>
         </div>
       </div>
       <div class="detail-group">
@@ -283,14 +301,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
   </td>
 </tr><tr style="cursor:pointer" onclick="togglePerson('p产品-4')">
   <td class="idx-col">5</td>
-  <td class="name-col">杨李雷</td>
-  <td class="num-col">16</td>
+  <td class="name-col">刘素素</td>
+  <td class="num-col">6</td>
   <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:0.0%;background:#ef4444"></div></div><span class="pbar-pct pct-low">0.0%</span></div></td>
-  <td class="num-col hrs-total">240.0h</td>
+  <td class="num-col hrs-total">60.0h</td>
   <td class="num-col hrs-done">0h</td>
-  <td class="num-col hrs-est">240.0h</td>
+  <td class="num-col hrs-est">60.0h</td>
   <td class="num-col hrs-spent">0.0h</td>
-  <td class="num-col hrs-left">240.0h</td>
+  <td class="num-col hrs-left">60.0h</td>
   <td><span class="tag tag-slow">迟缓</span></td>
 </tr>
 <tr id="detail-p产品-4" class="detail-row">
@@ -308,10 +326,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
       <div class="detail-group">
         <div class="dg-title" onclick="toggleGroup('p产品-4-doing')">
           <span class="dg-arrow" id="da-p产品-4-doing">&#9654;</span>
-          进行中任务 (0+16项)
+          进行中任务 (0+4项)
         </div>
         <div class="dg-body" id="dg-p产品-4-doing">
-          <span style="margin-right:10px"><a class="tlink" href="#">#292442</a> 【需求设计】珠海国补增加安装时间提醒 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292441</a> 【需求设计】脱谷机需求迭代 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292439</a> 【需求设计】短信整改四期 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292438</a> 【需求设计】修改物流单 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292437</a> 【需求设计】买赠赠实物活动 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292435</a> 【需求设计】第三方店铺催发货不推oms <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292434</a> 【需求设计】企业购认款查询限制调整 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292433</a> 【需求设计】海南国补开票推送时间更改 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292426</a> 【需求调研】珠海国补增加安装时间提醒 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292425</a> 【需求调研】脱谷机需求迭代 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292423</a> 【需求调研】短信整改四期 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292422</a> 【需求调研】修改物流单 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292421</a> 【需求调研】买赠赠实物活动 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292419</a> 【需求调研】第三方店铺催发货不推oms <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292418</a> 【需求调研】企业购认款查询限制调整 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292417</a> 【需求调研】海南国补开票推送时间更改 <span style="color:#aaa">(0h/15h)</span></span>
+          <span style="margin-right:10px"><a class="tlink" href="#">#292445</a> 【需求设计】搜索页分享文案调整 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292440</a> 【需求设计】26广西国补 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292429</a> 【需求调研】搜索页分享文案调整 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292424</a> 【需求调研】26广西国补 <span style="color:#aaa">(0h/15h)</span></span>
         </div>
       </div>
       <div class="detail-group">
@@ -320,6 +338,50 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
           Bug (0解决 + 0活跃)
         </div>
         <div class="dg-body" id="dg-p产品-4-bug">
+          <span style="color:#aaa">暂无Bug明细数据</span>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr><tr style="cursor:pointer" onclick="togglePerson('p产品-5')">
+  <td class="idx-col">6</td>
+  <td class="name-col">杨李雷</td>
+  <td class="num-col">16</td>
+  <td><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill" style="width:0.0%;background:#ef4444"></div></div><span class="pbar-pct pct-low">0.0%</span></div></td>
+  <td class="num-col hrs-total">240.0h</td>
+  <td class="num-col hrs-done">0h</td>
+  <td class="num-col hrs-est">240.0h</td>
+  <td class="num-col hrs-spent">0.0h</td>
+  <td class="num-col hrs-left">240.0h</td>
+  <td><span class="tag tag-slow">迟缓</span></td>
+</tr>
+<tr id="detail-p产品-5" class="detail-row">
+  <td colspan="10">
+    <div class="detail-cell">
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p产品-5-done')">
+          <span class="dg-arrow" id="da-p产品-5-done">&#9654;</span>
+          当月已完成任务 (0项)
+        </div>
+        <div class="dg-body" id="dg-p产品-5-done">
+          <span style="color:#aaa">无</span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p产品-5-doing')">
+          <span class="dg-arrow" id="da-p产品-5-doing">&#9654;</span>
+          进行中任务 (0+16项)
+        </div>
+        <div class="dg-body" id="dg-p产品-5-doing">
+          <span style="margin-right:10px"><a class="tlink" href="#">#292442</a> 【需求设计】珠海国补增加安装时间提醒 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292441</a> 【需求设计】脱谷机需求迭代 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292439</a> 【需求设计】短信整改四期 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292438</a> 【需求设计】修改物流单 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292437</a> 【需求设计】买赠赠实物活动 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292435</a> 【需求设计】第三方店铺催发货不推oms <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292434</a> 【需求设计】企业购认款查询限制调整 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292433</a> 【需求设计】海南国补开票推送时间更改 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292426</a> 【需求调研】珠海国补增加安装时间提醒 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292425</a> 【需求调研】脱谷机需求迭代 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292423</a> 【需求调研】短信整改四期 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292422</a> 【需求调研】修改物流单 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292421</a> 【需求调研】买赠赠实物活动 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292419</a> 【需求调研】第三方店铺催发货不推oms <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292418</a> 【需求调研】企业购认款查询限制调整 <span style="color:#aaa">(0h/15h)</span></span><br><span style="margin-right:10px"><a class="tlink" href="#">#292417</a> 【需求调研】海南国补开票推送时间更改 <span style="color:#aaa">(0h/15h)</span></span>
+        </div>
+      </div>
+      <div class="detail-group">
+        <div class="dg-title" onclick="toggleGroup('p产品-5-bug')">
+          <span class="dg-arrow" id="da-p产品-5-bug">&#9654;</span>
+          Bug (0解决 + 0活跃)
+        </div>
+        <div class="dg-body" id="dg-p产品-5-bug">
           <span style="color:#aaa">暂无Bug明细数据</span>
         </div>
       </div>
@@ -1480,6 +1542,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 <div class="chart-canvas"><canvas id="chart2"></canvas></div></div>
 </div>
 <script>
+/* 从禅道刷新最新数据（需启动 refresh_server.py） */
+function triggerRefresh(){
+    var btn = document.querySelector('.refresh-btn');
+    if(btn){ btn.onclick = null; btn.innerHTML = '⏳ 刷新中...'; }
+    fetch('http://127.0.0.1:8899/refresh')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+        setTimeout(function(){ location.reload(); }, 7000);
+    })
+    .catch(function(e){
+        /* 服务未启动，8秒后直接刷新页面 */
+        setTimeout(function(){ location.reload(); }, 8000);
+    });
+}
+
 function toggleRole(roleKey){
     // 切换角色tab激活状态
     document.querySelectorAll('.role-tab').forEach(function(el){
@@ -1517,9 +1594,9 @@ Chart.defaults.font.family='-apple-system,"Segoe UI","PingFang SC","Microsoft Ya
 Chart.defaults.font.size=11;
 Chart.defaults.color='#666';
 var ctx1=document.getElementById('chart1').getContext('2d');
-new Chart(ctx1,{type:'bar',data:{labels:["\u7a0b\u8fce\u5a23", "\u7f57\u54f2\u7476", "\u5218\u6653\u4e39", "\u5218\u7d20\u7d20", "\u6768\u674e\u96f7", "\u674e\u6c38\u9e4f", "\u66fe\u5baa\u8d35", "\u53e4\u5b5f\u6770", "\u674e\u6cbb\u56fd", "\u674e\u5cb3\u4e1c", "\u672a\u5206\u914d", "\u83ab\u6d4e\u8d22", "\u5362\u5353\u6977", "\u5f20\u5f00\u6587", "\u5468\u68a6\u6770", "\u6881\u80dc\u82b3", "\u6f58\u56fd\u5e73", "\u5468\u7fa4\u5cf0", "\u6c6a\u4f1f", "\u5f6d\u8861", "\u8d75\u6893\u65ed", "\u5f90\u71d5\u96ef", "\u4e07\u5609\u826f", "\u97e6\u798f\u5fe0", "\u9ec4\u78a7\u83b9", "\u738b\u65b0\u77f3", "\u80e1\u4e39", "\u90b9\u7433", "\u4f59\u4e4b\u715c", "\u90b9\u5029\u5982", "\u5f20\u9510"],datasets:[{label:'已完成消耗',data:[96.0, 10.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 207.0, 0, 0, 0, 0, 0, 135.0, 25.0, 0, 0, 0, 0, 0],backgroundColor:'#10b981'},{label:'进行中已耗',data:[32.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 7.0, 0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],backgroundColor:'#3b82f6'},{label:'进行中剩余',data:[16.0, 15.0, 120.0, 60.0, 240.0, 160.0, 164.0, 132.0, 108.0, 100.0, 0.0, 28.0, 32.0, 16.0, 16.0, 9.0, 16.0, 30.0, 0.0, 46.0, 275.0, 121.0, 113.0, 18.0, 128.0, 99.0, 129.0, 121.0, 94.0, 80.0, 90.0],backgroundColor:'#d1d5db'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'},title:{display:false}},scales:{x:{stacked:true},y:{stacked:true,title:{display:true,text:'工时(h)'}}}}});
+new Chart(ctx1,{type:'bar',data:{labels:["\u7a0b\u8fce\u5a23", "\u5f20\u65ed", "\u7f57\u54f2\u7476", "\u5218\u6653\u4e39", "\u5218\u7d20\u7d20", "\u6768\u674e\u96f7", "\u674e\u6c38\u9e4f", "\u66fe\u5baa\u8d35", "\u53e4\u5b5f\u6770", "\u674e\u6cbb\u56fd", "\u674e\u5cb3\u4e1c", "\u672a\u5206\u914d", "\u83ab\u6d4e\u8d22", "\u5362\u5353\u6977", "\u5f20\u5f00\u6587", "\u5468\u68a6\u6770", "\u6881\u80dc\u82b3", "\u6f58\u56fd\u5e73", "\u5468\u7fa4\u5cf0", "\u6c6a\u4f1f", "\u5f6d\u8861", "\u8d75\u6893\u65ed", "\u5f90\u71d5\u96ef", "\u4e07\u5609\u826f", "\u97e6\u798f\u5fe0", "\u9ec4\u78a7\u83b9", "\u738b\u65b0\u77f3", "\u80e1\u4e39", "\u90b9\u7433", "\u4f59\u4e4b\u715c", "\u90b9\u5029\u5982", "\u5f20\u9510"],datasets:[{label:'已完成消耗',data:[96.0, 96.0, 10.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 207.0, 0, 0, 0, 0, 0, 135.0, 25.0, 0, 0, 0, 0, 0],backgroundColor:'#10b981'},{label:'进行中已耗',data:[32.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 7.0, 0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],backgroundColor:'#3b82f6'},{label:'进行中剩余',data:[16.0, 76.0, 15.0, 120.0, 60.0, 240.0, 160.0, 164.0, 132.0, 108.0, 100.0, 0.0, 28.0, 32.0, 16.0, 16.0, 9.0, 16.0, 30.0, 0.0, 46.0, 275.0, 121.0, 113.0, 18.0, 128.0, 99.0, 129.0, 121.0, 94.0, 80.0, 90.0],backgroundColor:'#d1d5db'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'},title:{display:false}},scales:{x:{stacked:true},y:{stacked:true,title:{display:true,text:'工时(h)'}}}}});
 var ctx2=document.getElementById('chart2').getContext('2d');
-new Chart(ctx2,{type:'bar',data:{labels:["\u4ea7\u54c1", "\u540e\u7aef\u5f00\u53d1", "\u524d\u7aef\u5f00\u53d1", "\u6d4b\u8bd5"],datasets:[{label:'已完成消耗',data:[106.0, 0, 207.0, 160.0],backgroundColor:'#10b981'},{label:'进行中预估',data:[483.0, 818.0, 583.0, 741.0],backgroundColor:'#f59e0b'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'},title:{display:false}},scales:{y:{title:{display:true,text:'工时(h)'}}}}});
+new Chart(ctx2,{type:'bar',data:{labels:["\u4ea7\u54c1", "\u540e\u7aef\u5f00\u53d1", "\u524d\u7aef\u5f00\u53d1", "\u6d4b\u8bd5"],datasets:[{label:'已完成消耗',data:[202.0, 0, 207.0, 160.0],backgroundColor:'#10b981'},{label:'进行中预估',data:[559.0, 818.0, 583.0, 741.0],backgroundColor:'#f59e0b'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'},title:{display:false}},scales:{y:{title:{display:true,text:'工时(h)'}}}}});
 })();
 </script>
 </body></html>

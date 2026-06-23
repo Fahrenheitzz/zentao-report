@@ -160,9 +160,22 @@ def make_html(all_tasks, all_excs, today, update_time):
         '.hd .sub{color:#64748b;font-size:13px;letter-spacing:2px;margin-top:4px}'
         # 更新时间
         '.dt{text-align:center;margin:16px 0 22px;font-size:12px}'
-        '.dt span{display:inline-block;padding:5px 18px;border-radius:20px;'
-            'background:rgba(124,92,252,.08);border:1px solid rgba(124,92,252,.2);'
-            'color:#a78bfa;font-size:12px}'
+        '.dt{display:flex;align-items:center;justify-content:center;gap:12px;'
+            'margin:16px 0 22px;font-size:12px;flex-wrap:wrap}'
+        '#updateTime{display:inline-flex;align-items:center;gap:6px;padding:7px 20px;border-radius:22px;'
+            'background:linear-gradient(135deg,rgba(124,92,252,.15),rgba(68,229,255,.08));'
+            'border:1px solid rgba(124,92,252,.3);'
+            'color:#c4b5fd;font-size:12.5px;font-weight:600;letter-spacing:.5px}'
+        '.refresh-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 22px;border-radius:22px;'
+            'background:linear-gradient(135deg,#7c5cfc,#6343e8);'
+            'border:1px solid rgba(124,92,252,.4);'
+            'color:#fff;font-size:12.5px;font-weight:700;cursor:pointer;'
+            'transition:all .3s;letter-spacing:.5px;box-shadow:0 2px 10px rgba(124,92,252,.3)}'
+        '.refresh-btn:hover{transform:translateY(-1px);'
+            'background:linear-gradient(135deg,#8b6cff,#7455f0);'
+            'box-shadow:0 4px 18px rgba(124,92,252,.45)}'
+        '.refresh-btn .icon{font-size:14px;display:inline-block;transition:transform .4s}'
+        '.refresh-btn:hover .icon{transform:rotate(180deg)}'
         # 项目筛选
         '.fb{display:flex;justify-content:center;gap:8px;margin-bottom:24px;flex-wrap:wrap}'
         '.fn{padding:7px 22px;border-radius:20px;font-size:13px;font-weight:600;'
@@ -278,6 +291,7 @@ def make_html(all_tasks, all_excs, today, update_time):
         '.ft{text-align:center;margin-top:48px;padding-top:20px;'
             'border-top:1px solid rgba(255,255,255,.04);'
             'color:#4a5568;font-size:11px;letter-spacing:1px}'
+        '@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}'
     )
 
     # ── HTML 骨架 ────────────────────────────────────────────────────────
@@ -295,7 +309,7 @@ def make_html(all_tasks, all_excs, today, update_time):
     parts.append('<h1>禅道任务报告中心</h1>')
     parts.append('<p class="sub">Zentao Task Dashboard</p>')
     parts.append('</div>')
-    parts.append('<div class="dt"><span id="updateTime">📅 %s 更新</span><button class="refresh-btn" id="refreshBtn" onclick="triggerUpdate()"><span class="icon">↻</span> 实时更新</button></div>' % update_time)
+    parts.append('<div class="dt"><span id="updateTime">📅 %s 更新</span><button class="refresh-btn" id="refreshBtn" onclick="triggerUpdate()"><span class="icon">🔄</span> 实时刷新</button></div>' % update_time)
 
     # 筛选按钮
     parts.append('<div class="fb">')
@@ -311,14 +325,15 @@ def make_html(all_tasks, all_excs, today, update_time):
     parts.append('<div class="stit">— 数据洞察 —</div>')
     parts.append('<div class="ig">')
     # 延期任务卡片
-    parts.append('<a class="icd iov" id="odLink" href="#">')
+    parts.append(f'<a class="icd iov" id="odLink" href="{today}/延期任务统计报告.html">')
     parts.append('<div class="ici">🚨</div>')
     parts.append('<div class="icbdy">')
     parts.append('<div class="ict">延期任务</div>')
     parts.append('<div class="icsu" id="odInfo">-- 个延期 / -- 人</div>')
     parts.append('</div></a>')
     # 员工负载卡片
-    parts.append('<a class="icd iwl" id="wlLink" href="#">')
+    ym = today[:7].replace('-', '')
+    parts.append(f'<a class="icd iwl" id="wlLink" href="efficiency/效率分析_{ym}.html">')
     parts.append('<div class="ici">💪</div>')
     parts.append('<div class="icbdy">')
     parts.append('<div class="ict">员工负载</div>')
@@ -418,8 +433,9 @@ function renderInsight(tasks){
     });
     var om=new Set(); od.forEach(function(t){if(t._rn)om.add(t._rn)});
     document.getElementById("odInfo").textContent=od.length+" 个延期 / "+om.size+" 人 · 全平台超期追踪";
-    var wlUrl=TODAY+"/未完成员工负载_详细任务.html"+(curF!=="all"?"?project="+curF:"");
-    document.getElementById("odLink").href=wlUrl.replace("员工负载","延期任务");
+    var ym = TODAY.substring(0,7).replace(/-/g,'');
+    var wlUrl = "efficiency/效率分析_"+ym+".html";
+    document.getElementById("odLink").href = TODAY + "/延期任务统计报告.html";
     document.getElementById("wlLink").href=wlUrl;
     var ps=new Set(tasks.map(function(t){return t._rn}).filter(function(x){return x}));
     document.getElementById("wlInfo").textContent=ps.size+" 人参与 · 按角色分工时分析";
@@ -477,7 +493,7 @@ function renderOverview(){
             html+='<td style="font-size:12px;color:#94a3b8">'+(s.task_count||0)+' | '+(s.story_count||0)+' | '+(s.bug_count||0)+'</td>';
             html+='<td><div class="ov-prg"><div class="ov-prgf" style="width:'+pct+'%;background:'+gColor+'"></div></div>';
             html+='<span class="ov-pct">'+pct+'%</span></td>';
-            html+='<td><a class="ov-vl" href="'+TODAY+'/未完成测试任务_详细任务.html?project='+e.project_id+'" target="_blank">查看报告</a></td>';
+            html+='<td><a class="ov-vl" href="'+TODAY+'/迭代'+e.id+'_执行进展报告.html" target="_blank">查看报告</a></td>';
             html+='</tr>';
         });
         html+='</tbody></table>';
@@ -503,6 +519,22 @@ function setFilter(f){
     });
     renderCards();
 })();
+function triggerUpdate(){
+    var btn=document.getElementById("refreshBtn");
+    if(!btn) return;
+    btn.disabled=true;
+    btn.innerHTML='<span class="icon" style="animation:spin .8s linear infinite">🔄</span> 刷新中...';
+    btn.style.opacity=".7";
+    fetch('http://127.0.0.1:8899/refresh')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+        setTimeout(function(){ location.reload(); }, 7000);
+    })
+    .catch(function(e){
+        /* 服务未启动，8秒后直接刷新页面 */
+        setTimeout(function(){ location.reload(); }, 8000);
+    });
+}
 """
 
 # ── main ───────────────────────────────────────────────────────────────────

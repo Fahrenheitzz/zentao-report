@@ -277,11 +277,20 @@ CSS = """
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:#f0f2f5;color:#333;padding:20px;min-width:1100px}
 
 /* 头部 */
-.header{background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);color:#fff;border-radius:16px;padding:32px 36px;margin-bottom:24px;position:relative;overflow:hidden}
+.header{background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);color:#fff;border-radius:16px;padding:24px 32px;margin-bottom:24px;position:relative;overflow:hidden}
 .header::before{content:'';position:absolute;top:-50%;right:-10%;width:400px;height:400px;background:radial-gradient(circle,rgba(79,172,254,.15),transparent);border-radius:50%}
-.header h1{font-size:28px;font-weight:800;margin-bottom:8px;position:relative;z-index:1}
-.header .sub{font-size:13px;color:rgba(255,255,255,.65);margin-bottom:18px;position:relative;z-index:1}
-.refresh-btn{display:inline-block;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.22);padding:5px 16px;border-radius:20px;font-size:12px;cursor:pointer;transition:.2s;text-decoration:none;position:relative;z-index:1}
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;position:relative;z-index:1}
+.header-left{display:flex;align-items:center;gap:14px;min-width:0}
+.header-center{text-align:center;flex:1;min-width:0}
+.header-right{flex-shrink:0}
+.home-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 16px;
+    background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+    color:#fff;border-radius:20px;font-size:12px;text-decoration:none;
+    transition:.25s;white-space:nowrap;flex-shrink:0}
+.home-btn:hover{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.35)}
+.header h1{font-size:26px;font-weight:800;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.header .sub{font-size:12px;color:rgba(255,255,255,.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.refresh-btn{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.22);padding:6px 18px;border-radius:20px;font-size:12px;cursor:pointer;transition:.2s;text-decoration:none;white-space:nowrap;flex-shrink:0}
 .refresh-btn:hover{background:rgba(255,255,255,.22)}
 
 /* 概览卡片 */
@@ -360,6 +369,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 """
 
 JS = """
+/* 从禅道刷新最新数据（需启动 refresh_server.py） */
+function triggerRefresh(){
+    var btn = document.querySelector('.refresh-btn');
+    if(btn){ btn.onclick = null; btn.innerHTML = '⏳ 刷新中...'; }
+    fetch('http://127.0.0.1:8899/refresh')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+        setTimeout(function(){ location.reload(); }, 7000);
+    })
+    .catch(function(e){
+        /* 服务未启动，8秒后直接刷新页面 */
+        setTimeout(function(){ location.reload(); }, 8000);
+    });
+}
+
 function toggleRole(roleKey){
     // 切换角色tab激活状态
     document.querySelectorAll('.role-tab').forEach(function(el){
@@ -597,9 +621,18 @@ def build_html(year, month, role_data, overview):
     # ── 头部 ──
     parts.append(f'''
 <div class="header">
-  <h1>{month_label} 团队产出效率分析</h1>
-  <p class="sub">功能:角色分组 · 全量迭代 · {now_str}</p>
-  <a class="refresh-btn" href="#" onclick="location.reload()">⟳ 实时刷新</a>
+  <div class="header-inner">
+    <div class="header-left">
+      <a class="home-btn" href="../index.html">🏠 返回报告中心</a>
+    </div>
+    <div class="header-center">
+      <h1>{month_label} 团队产出效率分析</h1>
+      <p class="sub">功能:角色分组 · 全量迭代 · {now_str}</p>
+    </div>
+    <div class="header-right">
+      <a class="refresh-btn" href="#" onclick="triggerRefresh();return false;">⟳ 实时刷新</a>
+    </div>
+  </div>
 </div>''')
 
     # ── 概览卡片 ──
